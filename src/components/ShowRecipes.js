@@ -24,15 +24,15 @@ function ShowRecipes(props) {
     // eslint-disable-next-line
   }, [props.recipes]);
 
-  if (recipes.length === 0) {
-    return <p> Ei reseptejä (vielä!). </p>;
+  if ([recipes].length === 0) {
+    return <div className="recipe"> Ei reseptejä (vielä!). </div>;
   }
 
   return (
     <div>
       {recipes.map((recipe) => {
         return (
-          <div key={recipe.id}>
+          <div key={recipe.id} className="recipe">
             <h3>{recipe.name}</h3>
 
             <span>ID {recipe.id}</span>

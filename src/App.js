@@ -1,11 +1,16 @@
 import Sidebar from "./components/Sidebar";
 import Main from "./components/Main";
+import Topbar from "./components/Topbar";
+import "./style.css";
 
 function App() {
   return (
     <div className="appContainer">
-      <Sidebar />
-      <Main />
+      <Topbar />
+      <div className="appContainer-inner">
+        <Sidebar />
+        <Main />
+      </div>
     </div>
   );
 }
