@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import ShowRecipes from "./ShowRecipes";
+import RecipeOfTheDay from "./RecipeOfTheDay";
 
-function AddRecipe() {
+function AddRecipe(props) {
   // TODO: REFAKTOROI TILANHALLINTA ( REDUCER ? )
   // JA LISÄÄ AINAKIN TAGIT, MÄÄRÄT, KUVA... ( MUITA ? )
   const [name, setName] = useState("");
@@ -58,31 +59,49 @@ function AddRecipe() {
       id,
     };
     setRecipes([...recipes, { recipe: JSON.stringify(recipe) }]);
+    alert("Reseptin lisääminen onnistui!");
+    handleClear();
   };
 
+  // TODO: REFAKTOROI TILANHALLINNAN YHTEYDESSÄ
+  const handleClear = () => {
+    setName("");
+    setIncredientList([{ incredient: "" }]);
+    setInstructions("");
+    setTime("");
+    setPortions("");
+  };
+
+  // TODO: SIIVOA RETURN ( SELVITÄ VOIKO INPUTIT JAKAA OMIKSI KOMPONENTEIKSI TMS? )
   return (
     <div className="addContainer">
+      <RecipeOfTheDay recipe={props.recipe} />
       <div className="form-container">
         <form onSubmit={handleSubmit}>
+          <h2>Lisää uusi resepti</h2>
           <label>
-            Nimi:
+            Nimi: <br />
             <input
+              className="form-input"
               name="name"
               type="text"
               value={name}
               onChange={(e) => handleNameChange(e)}
+              required
             ></input>
           </label>
           <div className="form-incredients">
             <label>
               Raaka-aineet:
               {incredientList.map((incredient, index) => (
-                <div key={index}>
+                <div className="form-incredients-input" key={index}>
                   <input
                     name="incredient"
                     type="text"
                     value={incredient.incredient}
                     onChange={(e) => handleIncredientChange(e, index)}
+                    placeholder="esim. 1 dl sokeria"
+                    required
                   />
                   {incredientList.length - 1 === index && (
                     <button type="button" onClick={handleAddIncredient}>
@@ -102,17 +121,25 @@ function AddRecipe() {
             </label>
           </div>
           <label>
-            Työvaiheet:
+            Työvaiheet: <br />
             <textarea
+              className="form-input textarea"
               name="instructions"
+              rows={5}
               value={instructions}
               onChange={(e) => handleInstructionsChange(e)}
+              placeholder="Paina 'lisää' raaka-aineet -kohdassa lisätäksesi uuden raaka-aineen."
+              required
             />
           </label>
           <div className="form-options">
             <label>
-              Valmistusaika
-              <select value={time} onChange={(e) => handleTimeChange(e)}>
+              Valmistusaika &nbsp;
+              <select
+                className="form-options select"
+                value={time}
+                onChange={(e) => handleTimeChange(e)}
+              >
                 <option value="">Valitse</option>
                 <option value="alle 10 min">alle 10min</option>
                 <option value="10-20min"> 10-20min </option>
@@ -124,8 +151,12 @@ function AddRecipe() {
               </select>
             </label>
             <label>
-              Annosmäärä
-              <select value={portions} onChange={(e) => handlePortionChange(e)}>
+              Annosmäärä &nbsp;
+              <select
+                className="form-options select"
+                value={portions}
+                onChange={(e) => handlePortionChange(e)}
+              >
                 <option value="">Valitse</option>
                 <option value="1 annos">1 annos</option>
                 <option value="2 annosta"> 2 annosta </option>
@@ -136,7 +167,7 @@ function AddRecipe() {
               </select>
             </label>
           </div>
-          <input type="submit" value="Lisää resepti" />
+          <input className="form-submit" type="submit" value="Lisää resepti" />
         </form>
       </div>
       <div className="recipe-container">

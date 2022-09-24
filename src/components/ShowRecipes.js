@@ -20,34 +20,48 @@ function ShowRecipes(props) {
 
   useEffect(() => {
     fetchRecipe();
-    // v MUISTA POISTAA SIT KU TOIMII NIINKU PITÄÄKI
+    // v SELVITÄ MIKSI HERJAA
     // eslint-disable-next-line
   }, [props.recipes]);
 
-  if ([recipes].length === 0) {
+  if (recipes.length === 0) {
     return <div className="recipe"> Ei reseptejä (vielä!). </div>;
   }
 
   return (
     <div>
+      <h2>Omat reseptit</h2>
       {recipes.map((recipe) => {
         return (
           <div key={recipe.id} className="recipe">
             <h3>{recipe.name}</h3>
-
             <span>ID {recipe.id}</span>
-
-            {recipe.portions.length > 0 && (
-              <p> Annosmäärä: {recipe.portions} </p>
-            )}
-
-            {recipe.time.length > 0 && <p> Valmistusaika: {recipe.time} </p>}
-
-            {recipe.incredientList.map((list, index) => {
-              return <p key={index}>Raaka-aine: {list.incredient}</p>;
-            })}
-
-            <p>{recipe.instructions}</p>
+            <div className="row">
+              {recipe.time.length > 0 && (
+                <p>
+                  Valmistusaika: <b>{recipe.time}</b>
+                </p>
+              )}
+              {recipe.portions.length > 0 && (
+                <p>
+                  Annosmäärä: <b>{recipe.portions}</b>
+                </p>
+              )}
+            </div>
+            <div className="row">
+              <div className="recipe-incredients">
+                Raaka-aineet:
+                <ul>
+                  {recipe.incredientList.map((list, index) => {
+                    return <li key={index}>{list.incredient}</li>;
+                  })}
+                </ul>
+              </div>
+              <div className="recipe-instructions">
+                Valmistusohje:
+                <p>{recipe.instructions}</p>
+              </div>
+            </div>
           </div>
         );
       })}
