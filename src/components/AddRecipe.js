@@ -1,6 +1,63 @@
 import React, { useState } from "react";
 import ShowRecipes from "./ShowRecipes";
 import RecipeOfTheDay from "./RecipeOfTheDay";
+import {
+  Box,
+  Button,
+  MenuItem,
+  Paper,
+  Select,
+  TextField,
+  Typography,
+  InputLabel,
+  FormControl,
+  Slider,
+  Input,
+  IconButton,
+} from "@mui/material";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+
+const timeMarks = [
+  {
+    value: 10,
+    label: "<10 min",
+  },
+  {
+    value: 45,
+    label: "45 min",
+  },
+  {
+    value: 90,
+    label: "90+ min",
+  },
+];
+
+const portionMarks = [
+  {
+    value: 1,
+    label: "1",
+  },
+  {
+    value: 2,
+    label: "2",
+  },
+  {
+    value: 3,
+    label: "3",
+  },
+  {
+    value: 4,
+    label: "4",
+  },
+  {
+    value: 5,
+    label: "5",
+  },
+  {
+    value: 6,
+    label: "6+",
+  },
+];
 
 function AddRecipe(props) {
   // TODO: REFAKTOROI TILANHALLINTA ( REDUCER ? )
@@ -10,6 +67,7 @@ function AddRecipe(props) {
   const [instructions, setInstructions] = useState("");
   const [time, setTime] = useState("");
   const [portions, setPortions] = useState("");
+  const [category, setCategory] = useState("");
   const [recipes, setRecipes] = useState([]);
 
   const handleNameChange = (e) => {
@@ -38,11 +96,15 @@ function AddRecipe(props) {
   };
 
   const handleTimeChange = (e) => {
-    setTime(e.target.value);
+    setTime(e.target.value.toString());
   };
 
   const handlePortionChange = (e) => {
-    setPortions(e.target.value);
+    setPortions(e.target.value.toString());
+  };
+
+  const handleCategoryChange = (e) => {
+    setCategory(e.target.value);
   };
 
   // MUUTA SITTEN AIKANAAN LÄHETTÄMÄÄN KANTAAN TILAMUUTTUJAN SIJAAN
@@ -72,108 +134,182 @@ function AddRecipe(props) {
     setPortions("");
   };
 
-  // TODO: SIIVOA RETURN ( SELVITÄ VOIKO INPUTIT JAKAA OMIKSI KOMPONENTEIKSI TMS? )
   return (
-    <div className="addContainer">
+    <Box>
       <RecipeOfTheDay recipe={props.recipe} />
-      <div className="form-container">
-        <form onSubmit={handleSubmit}>
-          <h2>Lisää uusi resepti</h2>
-          <label>
-            Nimi: <br />
-            <input
-              className="form-input"
-              name="name"
-              type="text"
-              value={name}
-              onChange={(e) => handleNameChange(e)}
-              required
-            ></input>
-          </label>
-          <div className="form-incredients">
-            <label>
-              Raaka-aineet:
-              {incredientList.map((incredient, index) => (
-                <div className="form-incredients-input" key={index}>
-                  <input
-                    name="incredient"
-                    type="text"
-                    value={incredient.incredient}
-                    onChange={(e) => handleIncredientChange(e, index)}
-                    placeholder="esim. 1 dl sokeria"
-                    required
-                  />
-                  {incredientList.length - 1 === index && (
-                    <button type="button" onClick={handleAddIncredient}>
-                      Lisää
-                    </button>
-                  )}
-                  {incredientList.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveIncredient(index)}
-                    >
-                      Poista
-                    </button>
-                  )}
-                </div>
-              ))}
-            </label>
-          </div>
-          <label>
-            Työvaiheet: <br />
-            <textarea
-              className="form-input textarea"
-              name="instructions"
-              rows={5}
-              value={instructions}
-              onChange={(e) => handleInstructionsChange(e)}
-              placeholder="Paina 'lisää' raaka-aineet -kohdassa lisätäksesi uuden raaka-aineen."
-              required
+
+      <Paper
+        sx={{
+          width: 600,
+          padding: 5,
+          display: "flex",
+          flexDirection: "column",
+        }}
+        component="form"
+      >
+        <Typography sx={{ textAlign: "center", mb: 3 }} variant="h5">
+          Lisää uusi resepti
+        </Typography>
+        <FormControl>
+          <TextField
+            sx={{ mb: 2 }}
+            label="Nimi"
+            name="name"
+            value={name}
+            onChange={(e) => handleNameChange(e)}
+            required
+          />
+        </FormControl>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {incredientList.map((incredient, index) => (
+            <Box
+              sx={{
+                marginY: 1,
+                display: "flex",
+                alignItems: "center",
+              }}
+              key={index}
+            >
+              <TextField
+                sx={{ width: "80%" }}
+                label="Raaka-aine"
+                name="incredient"
+                value={incredient.incredient}
+                onChange={(e) => handleIncredientChange(e, index)}
+                placeholder="esim. 1 dl sokeria"
+                required
+              />
+
+              {incredientList.length > 1 && (
+                <IconButton
+                  sx={{ right: 55, marginRight: -6 }}
+                  onClick={() => handleRemoveIncredient(index)}
+                >
+                  <CancelOutlinedIcon fontSize="large" />
+                </IconButton>
+              )}
+              {incredientList.length - 1 === index && (
+                <Button
+                  sx={{ marginLeft: 3, paddingY: 1.7 }}
+                  color="secondary"
+                  variant="contained"
+                  onClick={handleAddIncredient}
+                >
+                  Lisää
+                </Button>
+              )}
+            </Box>
+          ))}
+        </Box>
+
+        <TextField
+          sx={{ marginY: 2 }}
+          multiline
+          label="Valmistusohje"
+          name="instructions"
+          rows={5}
+          value={instructions}
+          onChange={(e) => handleInstructionsChange(e)}
+          placeholder="Paina 'lisää' raaka-aineet -kohdassa lisätäksesi uuden raaka-aineen."
+          required
+        />
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <FormControl sx={{ mt: 2, minWidth: 150 }}>
+            <InputLabel id="select-time">Valmistusaika</InputLabel>
+            <Slider
+              labelId="select-time"
+              sx={{ width: 300, marginBottom: 5 }}
+              color="secondary"
+              onChange={(e) => handleTimeChange(e)}
+              value={time}
+              step={1}
+              valueLabelDisplay="auto"
+              marks={timeMarks}
+              min={10}
+              max={90}
             />
-          </label>
-          <div className="form-options">
-            <label>
-              Valmistusaika &nbsp;
-              <select
-                className="form-options select"
-                value={time}
-                onChange={(e) => handleTimeChange(e)}
-              >
-                <option value="">Valitse</option>
-                <option value="alle 10 min">alle 10min</option>
-                <option value="10-20min"> 10-20min </option>
-                <option value="20-30min"> 20-30min </option>
-                <option value="+30min"> +30min </option>
-                <option value="1h"> 1h </option>
-                <option value="1,5h"> 1,5h </option>
-                <option value="+2h"> +2h </option>
-              </select>
-            </label>
-            <label>
-              Annosmäärä &nbsp;
-              <select
-                className="form-options select"
-                value={portions}
-                onChange={(e) => handlePortionChange(e)}
-              >
-                <option value="">Valitse</option>
-                <option value="1 annos">1 annos</option>
-                <option value="2 annosta"> 2 annosta </option>
-                <option value="3 annosta"> 3 annosta </option>
-                <option value="4 annosta"> 4 annosta </option>
-                <option value="5 annosta"> 5 annosta </option>
-                <option value="6 annosta"> 6 annosta </option>
-              </select>
-            </label>
-          </div>
-          <input className="form-submit" type="submit" value="Lisää resepti" />
-        </form>
-      </div>
-      <div className="recipe-container">
+          </FormControl>
+          <FormControl sx={{ mt: 2, minWidth: 150 }}>
+            <InputLabel id="select-portions">Annosmäärä</InputLabel>
+            <Slider
+              labelId="select-portions"
+              sx={{ width: 300, marginBottom: 5 }}
+              color="secondary"
+              onChange={(e) => handlePortionChange(e)}
+              value={portions}
+              step={1}
+              valueLabelDisplay="auto"
+              marks={portionMarks}
+              min={1}
+              max={6}
+            />
+          </FormControl>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-around",
+            alignItems: "center",
+            paddingY: 2,
+          }}
+        >
+          <FormControl sx={{ marginY: 2, minWidth: 150 }}>
+            <InputLabel id="select-category">Kategoria</InputLabel>
+            <Select value={category} onChange={handleCategoryChange}>
+              <MenuItem value="">Kategoriat</MenuItem>
+              <MenuItem value="Pastat">Pastat</MenuItem>
+              <MenuItem value="Tex-Mex"> Tex-Mex </MenuItem>
+              <MenuItem value="Aasialainen"> Aasialainen </MenuItem>
+              <MenuItem value="Keitot"> Keitot </MenuItem>
+              <MenuItem value="Salaatit"> Salaatit </MenuItem>
+              <MenuItem value="Kastikkeet"> Kastikkeet </MenuItem>
+              <MenuItem value="Grilliruoat"> Grilliruoat </MenuItem>
+              <MenuItem value="Jälkiruoat"> Jälkiruoat </MenuItem>
+            </Select>
+          </FormControl>
+          <InputLabel id="upload">
+            <Input
+              type="file"
+              sx={{ display: "none" }}
+              id="upload"
+              name="upload"
+            />
+            <Button
+              sx={{ paddingY: 1.8, marginY: 2 }}
+              color="secondary"
+              variant="outlined"
+              component="span"
+            >
+              Lisää kuva
+            </Button>
+          </InputLabel>
+        </Box>
+        <Button
+          sx={{ paddingY: 1.8 }}
+          color="secondary"
+          variant="contained"
+          onClick={handleSubmit}
+        >
+          Tallenna
+        </Button>
+      </Paper>
+      <Box>
         <ShowRecipes recipes={recipes} />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
 

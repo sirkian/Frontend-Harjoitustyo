@@ -1,3 +1,4 @@
+import { Box } from "@mui/material";
 import React from "react";
 import AddRecipe from "./AddRecipe";
 
@@ -19,9 +20,9 @@ const recipeOfTheDay = [
 
 function Main() {
   return (
-    <div className="mainContainer">
+    <Box>
       <AddRecipe recipe={recipeOfTheDay} />
-    </div>
+    </Box>
   );
 }
 
