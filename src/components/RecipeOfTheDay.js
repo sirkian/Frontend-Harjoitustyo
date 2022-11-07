@@ -1,6 +1,6 @@
 import { Box, List, ListItem, ListItemText, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
@@ -11,6 +11,43 @@ import placeholder from "../img/placeholder.jpg";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import IconButton from "@mui/material/IconButton";
+
+const recipeOfTheDay = [
+  {
+    id: 1,
+    name: "Hernekeitto",
+    incredientList: [
+      { incredient: "1 prk Jalostajan hernekeittoa" },
+      { incredient: "2 rkl Turun sinappia" },
+      { incredient: "ripaus suolaa" },
+    ],
+    time: "alle 10 min",
+    portions: "2 annosta",
+    description:
+      "Torstai-iltojen klassikko, joka sopii erityisen hyvin viileneviin syysiltoihin.",
+    instructions:
+      "Lämmitä hernekeitto kattilassa. Mausta suolalla ja annostele lautasille. Koristele sinapilla.",
+  },
+  {
+    id: 2,
+    name: "Pannukakku",
+    incredientList: [
+      { incredient: "2 kpl kananmunaa" },
+      { incredient: "1,5 dl	sokeria" },
+      { incredient: "ripaus suolaa" },
+      { incredient: "1 tl leivinjauhetta" },
+      { incredient: "1 tl vaniljasokeria" },
+      { incredient: "8 dl maitoa" },
+      { incredient: "4 dl vehnäjauhoja" },
+      { incredient: "100g voita" },
+    ],
+    time: "30 min",
+    portions: "4 annosta",
+    description: "Kotikokista varastettu pannariohje.",
+    instructions:
+      "1. Sulata margariini 2. Sekoita kuivat aineet keskenään 3. Lisää maito, munat sekä sulatettu, jäähtynyt margariini 4. Sekoita, kunnes seos on tasaista.Kaada taikina leivinpaperille uunipellille ja paista 200-225 asteessa n. ½ tuntia.",
+  },
+];
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -23,20 +60,37 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-function RecipeOfTheDay(props) {
+function RecipeOfTheDay() {
   const [expanded, setExpanded] = useState(false);
+  const [likes, setLikes] = useState(0);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
   return (
-    <Box>
-      <Typography variant="h5">Päivän resepti</Typography>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+        paddingTop: 15,
+        minHeight: "100vh",
+        backgroundImage:
+          "linear-gradient(90deg, rgba(138,136,179,1) 0%, rgba(153,123,154,1) 100%)",
+      }}
+    >
       <Box>
-        {props.recipe.map((recipe) => {
+        {recipeOfTheDay.map((recipe) => {
           return (
-            <Card sx={{ maxWidth: 600, marginY: 5 }} key={recipe.id}>
+            <Card
+              sx={{
+                maxWidth: 600,
+                marginY: 5,
+                bgcolor: "rgba(255, 255, 255, 0.65)",
+              }}
+              key={recipe.id}
+            >
               <CardHeader title={recipe.name} subheader="NIMIMERKKI" />
 
               <CardMedia
@@ -59,12 +113,19 @@ function RecipeOfTheDay(props) {
                     </Typography>
                   )}
                 </Box>
+                <Typography
+                  sx={{ mt: 3, fontSize: 14, textAlign: "center" }}
+                  paragraph
+                >
+                  {recipe.description}
+                </Typography>
               </CardContent>
 
               <CardActions disableSpacing>
-                <IconButton>
+                <IconButton onClick={() => setLikes(likes + 1)}>
                   <FavoriteIcon />
                 </IconButton>
+                <Typography>{likes}</Typography>
                 <ExpandMore
                   expand={expanded}
                   onClick={handleExpandClick}
@@ -77,21 +138,30 @@ function RecipeOfTheDay(props) {
 
               <Collapse in={expanded} timeout="auto" unmountOnExit>
                 <CardContent>
-                  <Box>
-                    <Typography variant="h5">Raaka-aineet:</Typography>
+                  <Box sx={{ paddingX: 5 }}>
+                    <Typography variant="h5" sx={{ fontSize: 20 }}>
+                      Raaka-aineet:
+                    </Typography>
                     <List>
                       {recipe.incredientList.map((list, index) => {
                         return (
-                          <ListItem key={index}>
+                          <ListItem sx={{ paddingY: 0 }} key={index}>
                             <ListItemText primary={list.incredient} />
                           </ListItem>
                         );
                       })}
                     </List>
                   </Box>
-                  <Box>
-                    <Typography variant="h5">Valmistusohje:</Typography>
-                    <Typography paragraph>{recipe.instructions}</Typography>
+                  <Box sx={{ paddingX: 5 }}>
+                    <Typography variant="h5" sx={{ fontSize: 20, mt: 3 }}>
+                      Valmistusohje:
+                    </Typography>
+                    <Typography
+                      sx={{ paddingX: 2, mt: 2, fontSize: 14 }}
+                      paragraph
+                    >
+                      {recipe.instructions}
+                    </Typography>
                   </Box>
                 </CardContent>
               </Collapse>

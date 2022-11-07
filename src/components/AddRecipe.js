@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import ShowRecipes from "./ShowRecipes";
-import RecipeOfTheDay from "./RecipeOfTheDay";
 import {
   Box,
   Button,
@@ -64,9 +62,10 @@ function AddRecipe(props) {
   // JA LISÄÄ AINAKIN TAGIT, MÄÄRÄT, KUVA... ( MUITA ? )
   const [name, setName] = useState("");
   const [incredientList, setIncredientList] = useState([{ incredient: "" }]);
+  const [description, setDescription] = useState("");
   const [instructions, setInstructions] = useState("");
-  const [time, setTime] = useState("");
-  const [portions, setPortions] = useState("");
+  const [time, setTime] = useState(0);
+  const [portions, setPortions] = useState(0);
   const [category, setCategory] = useState("");
   const [recipes, setRecipes] = useState([]);
 
@@ -89,6 +88,10 @@ function AddRecipe(props) {
     const list = [...incredientList];
     list[index][name] = value;
     setIncredientList(list);
+  };
+
+  const handleDescriptionChange = (e) => {
+    setDescription(e.target.value);
   };
 
   const handleInstructionsChange = (e) => {
@@ -130,20 +133,29 @@ function AddRecipe(props) {
     setName("");
     setIncredientList([{ incredient: "" }]);
     setInstructions("");
-    setTime("");
-    setPortions("");
+    setTime(0);
+    setPortions(0);
   };
 
   return (
-    <Box>
-      <RecipeOfTheDay recipe={props.recipe} />
-
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+        paddingTop: 15,
+        minHeight: "100vh",
+        backgroundImage:
+          "linear-gradient(90deg, rgba(138,136,179,1) 0%, rgba(153,123,154,1) 100%)",
+      }}
+    >
       <Paper
         sx={{
           width: 600,
           padding: 5,
           display: "flex",
           flexDirection: "column",
+          bgcolor: "rgba(255, 255, 255, 0.65)",
         }}
         component="form"
       >
@@ -152,7 +164,6 @@ function AddRecipe(props) {
         </Typography>
         <FormControl>
           <TextField
-            sx={{ mb: 2 }}
             label="Nimi"
             name="name"
             value={name}
@@ -209,14 +220,20 @@ function AddRecipe(props) {
         </Box>
 
         <TextField
-          sx={{ marginY: 2 }}
+          multiline
+          label="Kuvaus"
+          rows={2}
+          value={description}
+          onChange={(e) => handleDescriptionChange(e)}
+        />
+
+        <TextField
           multiline
           label="Valmistusohje"
           name="instructions"
           rows={5}
           value={instructions}
           onChange={(e) => handleInstructionsChange(e)}
-          placeholder="Paina 'lisää' raaka-aineet -kohdassa lisätäksesi uuden raaka-aineen."
           required
         />
 
@@ -227,10 +244,15 @@ function AddRecipe(props) {
             alignItems: "center",
           }}
         >
-          <FormControl sx={{ mt: 2, minWidth: 150 }}>
-            <InputLabel id="select-time">Valmistusaika</InputLabel>
+          <FormControl sx={{ mt: 4, minWidth: 150, padding: 1 }}>
+            <InputLabel
+              sx={{ position: "absolute", top: -50, left: 80 }}
+              id="select-time"
+            >
+              Valmistusaika
+            </InputLabel>
             <Slider
-              labelId="select-time"
+              labelid="select-time"
               sx={{ width: 300, marginBottom: 5 }}
               color="secondary"
               onChange={(e) => handleTimeChange(e)}
@@ -242,10 +264,15 @@ function AddRecipe(props) {
               max={90}
             />
           </FormControl>
-          <FormControl sx={{ mt: 2, minWidth: 150 }}>
-            <InputLabel id="select-portions">Annosmäärä</InputLabel>
+          <FormControl sx={{ mt: 4, minWidth: 150, padding: 1 }}>
+            <InputLabel
+              sx={{ position: "absolute", top: -45, left: 80 }}
+              id="select-portions"
+            >
+              Annosmäärä
+            </InputLabel>
             <Slider
-              labelId="select-portions"
+              labelid="select-portions"
               sx={{ width: 300, marginBottom: 5 }}
               color="secondary"
               onChange={(e) => handlePortionChange(e)}
@@ -306,9 +333,6 @@ function AddRecipe(props) {
           Tallenna
         </Button>
       </Paper>
-      <Box>
-        <ShowRecipes recipes={recipes} />
-      </Box>
     </Box>
   );
 }

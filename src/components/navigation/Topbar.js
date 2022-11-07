@@ -1,9 +1,6 @@
 import {
   IconButton,
   Box,
-  Drawer,
-  List,
-  ListItem,
   ListItemIcon,
   ListItemText,
   MenuList,
@@ -19,9 +16,15 @@ import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettin
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import { Link, Outlet } from "react-router-dom";
 
 function Topbar() {
   const [menu, setMenu] = useState(null);
+  const user = {
+    ID: 1,
+    nickname: "perttiplaceholder",
+    email: "pera@gmail.com",
+  };
 
   const handleOpenMenu = (e) => {
     setMenu(e.currentTarget);
@@ -33,15 +36,8 @@ function Topbar() {
 
   return (
     <Box>
-      <AppBar
-        sx={{
-          zIndex: 1400,
-        }}
-        style={{
-          "background-image":
-            "radial-gradient(circle, rgba(241,241,241,1) 0%, rgba(219,219,219,0.5) 100%)",
-        }}
-      >
+      <Outlet />
+      <AppBar>
         <Toolbar
           sx={{
             display: "flex",
@@ -74,25 +70,25 @@ function Topbar() {
             <MenuList>
               <Menu
                 anchorEl={menu}
-                anchorOrigin={{ vertical: 60 }}
+                anchorOrigin={{ vertical: 60, horizontal: 0 }}
                 open={Boolean(menu)}
                 onClose={handleCloseMenu}
               >
-                <MenuItem onClick={handleCloseMenu}>
+                <MenuItem component={Link} to={"user/" + user.ID + "/settings"}>
                   <ListItemIcon>
                     <AdminPanelSettingsOutlinedIcon />
                   </ListItemIcon>
                   <ListItemText primary="Asetukset" />
                 </MenuItem>
 
-                <MenuItem onClick={handleCloseMenu}>
+                <MenuItem component={Link} to={"user/" + user.ID + "/recipes"}>
                   <ListItemIcon>
                     <MenuBookOutlinedIcon />
                   </ListItemIcon>
                   <ListItemText primary="Omat reseptit" />
                 </MenuItem>
 
-                <MenuItem onClick={handleCloseMenu}>
+                <MenuItem component={Link} to={"user/" + user.ID + "/liked"}>
                   <ListItemIcon>
                     <FavoriteBorderOutlinedIcon />
                   </ListItemIcon>
