@@ -14,6 +14,7 @@ import {
   IconButton,
 } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import axios from "axios";
 
 const timeMarks = [
   {
@@ -57,7 +58,7 @@ const portionMarks = [
   },
 ];
 
-function AddRecipe(props) {
+function AddRecipe() {
   // TODO: REFAKTOROI TILANHALLINTA ( REDUCER ? )
   // JA LISÄÄ AINAKIN TAGIT, MÄÄRÄT, KUVA... ( MUITA ? )
   const [name, setName] = useState("");
@@ -67,7 +68,7 @@ function AddRecipe(props) {
   const [time, setTime] = useState(0);
   const [portions, setPortions] = useState(0);
   const [category, setCategory] = useState("");
-  const [recipes, setRecipes] = useState([]);
+  const [image, setImage] = useState([]);
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -99,33 +100,43 @@ function AddRecipe(props) {
   };
 
   const handleTimeChange = (e) => {
-    setTime(e.target.value.toString());
+    setTime(e.target.value);
   };
 
   const handlePortionChange = (e) => {
-    setPortions(e.target.value.toString());
+    setPortions(e.target.value);
   };
 
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
   };
 
-  // MUUTA SITTEN AIKANAAN LÄHETTÄMÄÄN KANTAAN TILAMUUTTUJAN SIJAAN
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // ESITTÄÄ BACKENDIN LUOMAA UNIIKKIA ID:TÄ
-    const id = Math.random() * 100;
-    const recipe = {
-      name,
-      incredientList,
-      instructions,
-      time,
-      portions,
-      id,
-    };
-    setRecipes([...recipes, { recipe: JSON.stringify(recipe) }]);
-    alert("Reseptin lisääminen onnistui!");
-    handleClear();
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
+  };
+
+  const handleSubmit = async (e) => {
+    let incredients = "";
+    for (let i = 0; i < incredientList.length; i++) {
+      incredients = incredients + incredientList[i].incredient + "|";
+    }
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("time", time);
+    formData.append("portions", portions);
+    formData.append("description", description);
+    formData.append("instructions", instructions);
+    formData.append("image", image);
+    formData.append("category", category);
+    formData.append("incredients", incredients);
+    formData.append("date", new Date());
+    try {
+      await axios.post("http://localhost:8080/recipes/add", formData);
+      handleClear();
+    } catch (error) {
+      handleClear();
+      console.log(error.message);
+    }
   };
 
   // TODO: REFAKTOROI TILANHALLINNAN YHTEYDESSÄ
@@ -133,8 +144,11 @@ function AddRecipe(props) {
     setName("");
     setIncredientList([{ incredient: "" }]);
     setInstructions("");
+    setDescription("");
     setTime(0);
     setPortions(0);
+    setImage([]);
+    setCategory("");
   };
 
   return (
@@ -188,13 +202,13 @@ function AddRecipe(props) {
               key={index}
             >
               <TextField
+                required
                 sx={{ width: "80%" }}
                 label="Raaka-aine"
                 name="incredient"
                 value={incredient.incredient}
                 onChange={(e) => handleIncredientChange(e, index)}
                 placeholder="esim. 1 dl sokeria"
-                required
               />
 
               {incredientList.length > 1 && (
@@ -295,7 +309,7 @@ function AddRecipe(props) {
         >
           <FormControl sx={{ marginY: 2, minWidth: 150 }}>
             <InputLabel id="select-category">Kategoria</InputLabel>
-            <Select value={category} onChange={handleCategoryChange}>
+            <Select value={category} onChange={(e) => handleCategoryChange(e)}>
               <MenuItem value="">Kategoriat</MenuItem>
               <MenuItem value="Pastat">Pastat</MenuItem>
               <MenuItem value="Tex-Mex"> Tex-Mex </MenuItem>
@@ -309,19 +323,29 @@ function AddRecipe(props) {
           </FormControl>
           <InputLabel id="upload">
             <Input
+              required
+              accept="image/*"
               type="file"
               sx={{ display: "none" }}
               id="upload"
               name="upload"
+              onChange={(e) => handleImageChange(e)}
             />
-            <Button
-              sx={{ paddingY: 1.8, marginY: 2 }}
-              color="secondary"
-              variant="outlined"
-              component="span"
-            >
-              Lisää kuva
-            </Button>
+            {typeof image.name === "undefined" ? (
+              <Button
+                sx={{ paddingY: 1.8, marginY: 2 }}
+                color="secondary"
+                variant="outlined"
+                component="span"
+              >
+                Lisää kuva
+              </Button>
+            ) : (
+              <Box sx={{ textAlign: "center", maxWidth: 100 }}>
+                <Typography sx={{ fontSize: 12 }}>{image.name}</Typography>
+                <Typography sx={{ fontSize: 10 }}>Change</Typography>
+              </Box>
+            )}
           </InputLabel>
         </Box>
         <Button

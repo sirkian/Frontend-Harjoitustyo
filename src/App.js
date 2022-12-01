@@ -7,6 +7,7 @@ import Error from "./components/navigation/Error";
 import Settings from "./components/user/Settings";
 import OwnRecipes from "./components/user/OwnRecipes";
 import Liked from "./components/user/Liked";
+import ShowRecipes from "./components/ShowRecipes";
 
 const semiTransparent = "rgba(255, 255, 255, 0.55)";
 const theme = createTheme({
@@ -62,7 +63,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Navigation />}>
-            <Route index element={<RecipeOfTheDay />} />
+            <Route index element={<ShowRecipes />} />
             <Route path="add" element={<AddRecipe />} />
             <Route path="user/:ID/settings" element={<Settings />} />
             <Route path="user/:ID/recipes" element={<OwnRecipes />} />

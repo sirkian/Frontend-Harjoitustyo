@@ -52,7 +52,7 @@ app.post("/recipes/add", upload.single("image"), (req, res) => {
     fileName = req.file.originalname;
   }
   db.run(
-    "INSERT INTO recipe (name, time, portions, description, instructions, image) VALUES (?, ?, ?, ?, ?, ?)",
+    "INSERT INTO recipe (name, time, portions, description, instructions, image, category, incredients, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
     [
       file.name,
       file.time,
@@ -60,6 +60,9 @@ app.post("/recipes/add", upload.single("image"), (req, res) => {
       file.description,
       file.instructions,
       fileName,
+      file.category,
+      file.incredients,
+      file.date,
     ],
     (error, result) => {
       if (error) throw error;
@@ -77,7 +80,7 @@ app.get("/recipes/delete/:id", (req, res) => {
 });
 
 app.get("/recipes/download/:name", (req, res) => {
-  let file = "./img" + req.params.name;
+  let file = "./img/" + req.params.name;
   res.download(file);
 });
 

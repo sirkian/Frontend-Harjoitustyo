@@ -10,7 +10,10 @@ db.serialize(() => {
     "portions text, " +
     "description text, " +
     "instructions text NOT NULL, " +
-    "image text)";
+    "image text, " +
+    "category text, " +
+    "incredients text NOT NULL, " +
+    "date date)";
 
   db.run(sql, (error) => {
     if (error) {

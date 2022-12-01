@@ -7,10 +7,10 @@ import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Collapse from "@mui/material/Collapse";
-import placeholder from "../img/placeholder.jpg";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import IconButton from "@mui/material/IconButton";
+import axios from "axios";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -23,57 +23,69 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-function ShowRecipes(props) {
+function ShowRecipes() {
   const [recipes, setRecipes] = useState([]);
+  const [errorMsg, setErrorMsg] = useState("Loading recipes...");
   const [expanded, setExpanded] = useState(false);
-
-  // TÄN TILALLE ASYNC FUNKTIO, KUN HAETAAN KANNASTA
-  const fetchRecipe = () => {
-    const position = props.recipes.length - 1;
-    if (position < 0) {
-      return;
-    }
-    const recipe = props.recipes[position].recipe;
-    try {
-      const json = JSON.parse(recipe);
-      setRecipes([...recipes, json]);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   useEffect(() => {
     fetchRecipe();
-    // eslint-disable-next-line
-  }, [props.recipes]);
+  }, []);
 
-  if (recipes.length === 0) {
-    return <Typography> Ei reseptejä (vielä!). </Typography>;
-  }
+  const fetchRecipe = async () => {
+    try {
+      const res = await axios.get("http://localhost:8080/recipes/all");
+      setRecipes(res.data);
+      setErrorMsg("");
+    } catch (error) {
+      setRecipes([]);
+      setErrorMsg("Failed to load recipes.");
+      console.log(error.message);
+    }
+  };
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
+  console.log(recipes);
+
   return (
-    <Box>
-      <Typography variant="h5">Omat reseptit</Typography>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+        paddingTop: 15,
+        minHeight: "100vh",
+        backgroundImage:
+          "linear-gradient(90deg, rgba(138,136,179,1) 0%, rgba(153,123,154,1) 100%)",
+      }}
+    >
       {recipes
         .slice(0)
         .reverse()
         .map((recipe) => {
           return (
-            <Card sx={{ maxWidth: 600, marginTop: 5 }} key={recipe.id}>
+            <Card
+              sx={{
+                width: 600,
+                marginY: 5,
+                bgcolor: "rgba(255, 255, 255, 0.65)",
+              }}
+              key={recipe.id}
+            >
               <CardHeader title={recipe.name} subheader="NIMIMERKKI" />
 
               <CardMedia
                 component="img"
                 height="194"
-                image={placeholder}
-                alt="PLACEHOLDER"
+                src={"http://localhost:8080/recipes/download/" + recipe.image}
+                alt={recipe.image}
               />
 
               <CardContent>
+                <Typography>{recipe.date.substr(3, 12)}</Typography>
                 <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                   {recipe.time.length > 0 && (
                     <Typography>
@@ -86,6 +98,12 @@ function ShowRecipes(props) {
                     </Typography>
                   )}
                 </Box>
+                <Typography
+                  sx={{ mt: 3, fontSize: 14, textAlign: "center" }}
+                  paragraph
+                >
+                  {recipe.description}
+                </Typography>
               </CardContent>
 
               <CardActions disableSpacing>
@@ -107,10 +125,10 @@ function ShowRecipes(props) {
                   <Box>
                     <Typography variant="h5">Raaka-aineet:</Typography>
                     <List>
-                      {recipe.incredientList.map((list, index) => {
+                      {recipe.incredients.split("|").map((list, index) => {
                         return (
                           <ListItem key={index}>
-                            <ListItemText primary={list.incredient} />
+                            <ListItemText primary={list} />
                           </ListItem>
                         );
                       })}
@@ -125,6 +143,8 @@ function ShowRecipes(props) {
             </Card>
           );
         })}
+      {recipes.length === 0 && <Typography>Ei reseptejä (vielä!).</Typography>}
+      {errorMsg.length > 0 && <Typography>{errorMsg}</Typography>}
     </Box>
   );
 }
