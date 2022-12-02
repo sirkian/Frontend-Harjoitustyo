@@ -2,7 +2,7 @@ import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navigation from "./components/navigation/Navigation";
 import AddRecipe from "./components/AddRecipe";
-import RecipeOfTheDay from "./components/RecipeOfTheDay";
+import EditRecipe from "./components/EditRecipe";
 import Error from "./components/navigation/Error";
 import Settings from "./components/user/Settings";
 import OwnRecipes from "./components/user/OwnRecipes";
@@ -65,6 +65,7 @@ function App() {
           <Route path="/" element={<Navigation />}>
             <Route index element={<ShowRecipes />} />
             <Route path="add" element={<AddRecipe />} />
+            <Route path="edit" element={<EditRecipe />} />
             <Route path="user/:ID/settings" element={<Settings />} />
             <Route path="user/:ID/recipes" element={<OwnRecipes />} />
             <Route path="user/:ID/liked" element={<Liked />} />

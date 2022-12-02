@@ -1,4 +1,12 @@
-import { Box, List, ListItem, ListItemText, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  List,
+  ListItem,
+  ListItemText,
+  Snackbar,
+  Typography,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import React, { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
@@ -9,8 +17,11 @@ import CardActions from "@mui/material/CardActions";
 import Collapse from "@mui/material/Collapse";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -25,30 +36,57 @@ const ExpandMore = styled((props) => {
 
 function ShowRecipes() {
   const [recipes, setRecipes] = useState([]);
-  const [errorMsg, setErrorMsg] = useState("Loading recipes...");
-  const [expanded, setExpanded] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("Haetaan reseptejä...");
+  const [expanded, setExpanded] = useState(-1);
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchRecipe();
+    fetchRecipes();
   }, []);
 
-  const fetchRecipe = async () => {
+  const fetchRecipes = async () => {
     try {
       const res = await axios.get("http://localhost:8080/recipes/all");
       setRecipes(res.data);
       setErrorMsg("");
     } catch (error) {
       setRecipes([]);
-      setErrorMsg("Failed to load recipes.");
+      setErrorMsg("Haku epäonnistui.");
       console.log(error.message);
     }
   };
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
+  const handleNavigate = async (recipe) => {
+    const list = { ...recipe.incredients.split("|") };
+    const keys = Object.keys(list);
+    const res = [];
+    for (let i = 0; i < keys.length; i++) {
+      if (list[keys[i]].length > 0) {
+        res.push({
+          incredient: list[keys[i]],
+        });
+      }
+    }
+    const recipeToEdit = await { ...recipe, incredients: res };
+    navigate("edit", { state: { recipe: recipeToEdit } });
   };
 
-  console.log(recipes);
+  const handleDelete = async (id) => {
+    if (window.confirm("Haluatko varmasti poistaa reseptin?")) {
+      try {
+        await axios.get("http://localhost:8080/recipes/delete/" + id);
+        setOpen(true);
+        fetchRecipes();
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+  };
+
+  const handleExpand = (i) => {
+    setExpanded(expanded === i ? -1 : i);
+  };
 
   return (
     <Box
@@ -65,7 +103,7 @@ function ShowRecipes() {
       {recipes
         .slice(0)
         .reverse()
-        .map((recipe) => {
+        .map((recipe, i) => {
           return (
             <Card
               sx={{
@@ -112,15 +150,21 @@ function ShowRecipes() {
                 </IconButton>
                 <ExpandMore
                   expand={expanded}
-                  onClick={handleExpandClick}
-                  aria-expanded={expanded}
+                  onClick={() => handleExpand(i)}
+                  aria-expanded={expanded === i}
                   aria-label="show more"
                 >
                   <ExpandMoreIcon />
                 </ExpandMore>
+                <IconButton onClick={() => handleNavigate(recipe)}>
+                  <EditIcon />
+                </IconButton>
+                <IconButton onClick={() => handleDelete(recipe.id)}>
+                  <DeleteIcon />
+                </IconButton>
               </CardActions>
 
-              <Collapse in={expanded} timeout="auto" unmountOnExit>
+              <Collapse in={expanded === i} timeout="auto" unmountOnExit>
                 <CardContent>
                   <Box>
                     <Typography variant="h5">Raaka-aineet:</Typography>
@@ -143,6 +187,20 @@ function ShowRecipes() {
             </Card>
           );
         })}
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        open={open}
+        onClose={() => setOpen(false)}
+        autoHideDuration={6000}
+      >
+        <Alert
+          onClose={() => setOpen(false)}
+          severity="warning"
+          sx={{ width: "100%" }}
+        >
+          Recipe deleted!
+        </Alert>
+      </Snackbar>
       {recipes.length === 0 && <Typography>Ei reseptejä (vielä!).</Typography>}
       {errorMsg.length > 0 && <Typography>{errorMsg}</Typography>}
     </Box>

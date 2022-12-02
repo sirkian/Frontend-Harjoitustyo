@@ -43,8 +43,6 @@ app.get("/recipes/:id", (req, res) => {
   });
 });
 
-// TODO:
-// LISÄÄ RAAKA-AINEET
 app.post("/recipes/add", upload.single("image"), (req, res) => {
   let file = req.body;
   let fileName = null;
@@ -71,8 +69,35 @@ app.post("/recipes/add", upload.single("image"), (req, res) => {
   );
 });
 
+app.post("/recipes/edit/", upload.single("image"), (req, res) => {
+  let file = req.body;
+  let fileName = null;
+  if (req.file) {
+    fileName = req.file.originalname;
+  }
+  db.run(
+    "UPDATE recipe SET name = ?, time = ?, portions = ?, description = ?, instructions = ?, image = ?, category = ?, incredients = ?, date = ? WHERE id = ?",
+    [
+      file.name,
+      file.time,
+      file.portions,
+      file.description,
+      file.instructions,
+      fileName === null ? file.image : fileName,
+      file.category,
+      file.incredients,
+      file.date,
+      file.id,
+    ],
+    (error, result) => {
+      if (error) throw error;
+      return res.status(200).json({ count: 1 });
+    }
+  );
+});
+
 app.get("/recipes/delete/:id", (req, res) => {
-  let id = req.params.id;
+  const id = req.params.id;
   db.run("DELETE FROM recipe WHERE id = ?", [id], function (error, result) {
     if (error) throw error;
     return res.status(200).json({ count: this.changes });

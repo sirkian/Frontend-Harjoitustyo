@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -17,6 +17,8 @@ import {
 } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import axios from "axios";
+import { useLocation } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 const timeMarks = [
   {
@@ -60,19 +62,12 @@ const portionMarks = [
   },
 ];
 
-function AddRecipe() {
-  const [open, setOpen] = useState(false);
+function EditRecipe() {
+  const params = useLocation().state.recipe;
   const [error, setError] = useState("");
-  const [incredientList, setIncredientList] = useState([{ incredient: "" }]);
-  const [recipe, setValues] = useState({
-    recipeName: "",
-    description: "",
-    instructions: "",
-    time: 10,
-    portions: 1,
-    category: "",
-    image: [],
-  });
+  const [incredientList, setIncredientList] = useState(params.incredients);
+  const [recipe, setValues] = useState(params);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setValues({
@@ -106,7 +101,7 @@ function AddRecipe() {
   };
 
   const validate = () => {
-    if (recipe.recipeName.length < 3)
+    if (recipe.name.length < 3)
       return setError("Nimen pitää olla vähintään 3 merkkiä pitkä!");
     if (incredientList[0].incredient.length === 0)
       return setError("Lisää vähintään yksi raaka-aine!");
@@ -125,7 +120,7 @@ function AddRecipe() {
       incredients = incredients + incredientList[i].incredient + "|";
     }
     const formData = new FormData();
-    formData.append("name", recipe.recipeName);
+    formData.append("name", recipe.name);
     formData.append("time", recipe.time);
     formData.append("portions", recipe.portions);
     formData.append("description", recipe.description);
@@ -134,28 +129,13 @@ function AddRecipe() {
     formData.append("category", recipe.category);
     formData.append("incredients", incredients);
     formData.append("date", new Date());
+    formData.append("id", recipe.id);
     try {
-      await axios.post("http://localhost:8080/recipes/add", formData);
-      setOpen(true);
-      handleClear();
+      await axios.post("http://localhost:8080/recipes/edit", formData);
+      navigate(-1);
     } catch (error) {
       console.log(error.message);
-      handleClear();
     }
-  };
-
-  const handleClear = () => {
-    setIncredientList([{ incredient: "" }]);
-    setError("");
-    setValues({
-      recipeName: "",
-      description: "",
-      instructions: "",
-      time: 10,
-      portions: 1,
-      category: "",
-      image: [],
-    });
   };
 
   return (
@@ -181,13 +161,13 @@ function AddRecipe() {
         component="form"
       >
         <Typography sx={{ textAlign: "center", mb: 3 }} variant="h5">
-          Lisää uusi resepti
+          Muokkaa reseptiä
         </Typography>
         <FormControl>
           <TextField
             label="Nimi"
-            name="recipeName"
-            value={recipe.recipeName}
+            name="name"
+            value={recipe.name}
             onChange={(e) => handleChange(e)}
             required
           />
@@ -352,7 +332,7 @@ function AddRecipe() {
                 variant="outlined"
                 component="span"
               >
-                Lisää kuva
+                Vaihda kuva
               </Button>
             ) : (
               <Box sx={{ textAlign: "center", maxWidth: 100 }}>
@@ -370,25 +350,11 @@ function AddRecipe() {
           variant="contained"
           onClick={validate}
         >
-          {error.length > 0 ? error : "Tallenna"}
+          {error.length > 0 ? error : "Tallenna muutokset"}
         </Button>
       </Paper>
-      <Snackbar
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        open={open}
-        onClose={() => setOpen(false)}
-        autoHideDuration={6000}
-      >
-        <Alert
-          onClose={() => setOpen(false)}
-          severity="success"
-          sx={{ width: "100%" }}
-        >
-          Recipe added!
-        </Alert>
-      </Snackbar>
     </Box>
   );
 }
 
-export default AddRecipe;
+export default EditRecipe;
