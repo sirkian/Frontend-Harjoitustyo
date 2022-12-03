@@ -2,10 +2,10 @@ import React from "react";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 
-export default function Navigation() {
+export default function Navigation({ darkMode, setDarkMode }) {
   return (
     <>
-      <Sidebar />
+      <Sidebar darkMode={darkMode} setDarkMode={setDarkMode} />
       <Topbar />
     </>
   );

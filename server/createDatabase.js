@@ -13,7 +13,9 @@ db.serialize(() => {
     "image text, " +
     "category text, " +
     "incredients text NOT NULL, " +
-    "date date)";
+    "date date, " +
+    "userName text NOT NULL, " +
+    "userId text NOT NULL)";
 
   db.run(sql, (error) => {
     if (error) {

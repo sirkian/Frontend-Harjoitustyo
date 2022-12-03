@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+import { CssBaseline, Menu, ThemeProvider } from "@mui/material";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navigation from "./components/navigation/Navigation";
 import AddRecipe from "./components/AddRecipe";
@@ -9,62 +9,16 @@ import Settings from "./components/user/Settings";
 import OwnRecipes from "./components/user/OwnRecipes";
 import Liked from "./components/user/Liked";
 import ShowRecipes from "./components/ShowRecipes";
-import { auth } from "./utils/firebase";
+import { auth } from "./utils/Firebase";
 import AuthenticatedUserProvider from "./components/navigation/AuthenticatedUserProvider";
 import { AuthenticatedUserContext } from "./components/navigation/AuthenticatedUserProvider";
 import SignUp from "./components/SignUp";
 import LogIn from "./components/LogIn";
-
-const semiTransparent = "rgba(255, 255, 255, 0.55)";
-const theme = createTheme({
-  palette: {
-    primary: { main: "#f5f5f5", contrastText: "#212121" },
-    secondary: { main: "#342b36", contrastText: "#60ebb6" },
-    text: { primary: "#212121", secondary: "#51c297" },
-  },
-  typography: {
-    fontFamily: "Poppins",
-  },
-  components: {
-    MuiTextField: {
-      styleOverrides: {
-        root: {
-          marginTop: 5,
-          marginBottom: 5,
-          backgroundColor: semiTransparent,
-          borderRadius: 3,
-        },
-      },
-    },
-    MuiDrawer: {
-      styleOverrides: {
-        paper: {
-          backgroundColor: "rgba(255, 255, 255, 0.3)",
-          border: "none",
-          marginTop: 74,
-        },
-      },
-    },
-    MuiSelect: {
-      styleOverrides: {
-        root: {
-          backgroundColor: semiTransparent,
-        },
-      },
-    },
-    MuiAppBar: {
-      styleOverrides: {
-        root: {
-          zIndex: 1400,
-          backgroundColor: semiTransparent,
-        },
-      },
-    },
-  },
-});
+import { lightTheme, darkTheme } from "./utils/Theme";
 
 function App() {
   const { user, setUser } = useContext(AuthenticatedUserContext);
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     const unsubscribeAuth = auth.onAuthStateChanged(
@@ -83,10 +37,15 @@ function App() {
 
   return (
     <AuthenticatedUserProvider>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Navigation />}>
+            <Route
+              path="/"
+              element={
+                <Navigation darkMode={darkMode} setDarkMode={setDarkMode} />
+              }
+            >
               <Route index element={<ShowRecipes />} />
               <Route path="add" element={<AddRecipe />} />
               <Route path="edit" element={<EditRecipe />} />

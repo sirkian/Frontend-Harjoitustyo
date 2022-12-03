@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Drawer,
   List,
@@ -6,10 +6,21 @@ import {
   ListItemText,
   TextField,
   Box,
+  Button,
+  IconButton,
 } from "@mui/material";
 import { Link, Outlet } from "react-router-dom";
+import { auth } from "../../utils/Firebase";
+import { useNavigate } from "react-router-dom";
+import SearchIcon from "@mui/icons-material/Search";
+import ClearIcon from "@mui/icons-material/Clear";
 
-function Sidebar() {
+function Sidebar({ darkMode, setDarkMode }) {
+  const user = auth.currentUser;
+  const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+  const clear = true;
+
   return (
     <Box>
       <Outlet />
@@ -30,7 +41,18 @@ function Sidebar() {
               sx={{ padding: 1, width: "70%" }}
               variant="standard"
               placeholder="Hae.."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
             />
+            <IconButton
+              sx={{ left: -50 }}
+              onClick={() => navigate("/", { state: { query } })}
+            >
+              <SearchIcon />
+            </IconButton>
+            <IconButton sx={{ left: -40 }} onClick={() => navigate(-1)}>
+              <ClearIcon />
+            </IconButton>
           </ListItem>
           <ListItem>
             <ListItem button component={Link} to="/">
@@ -38,7 +60,7 @@ function Sidebar() {
             </ListItem>
           </ListItem>
           <ListItem>
-            <ListItem button component={Link} to="add">
+            <ListItem button component={Link} to={user ? "add" : "login"}>
               <ListItemText primary="Lisää resepti" />
             </ListItem>
           </ListItem>
@@ -50,6 +72,13 @@ function Sidebar() {
           <ListItem>
             <ListItem button component={Link} to="mealdb">
               <ListItemText primary="Inspiraatio" />
+            </ListItem>
+          </ListItem>
+          <ListItem>
+            <ListItem button onClick={() => setDarkMode(!darkMode)}>
+              <ListItemText
+                primary={darkMode ? "Vaalea teema" : "Tumma teema"}
+              />
             </ListItem>
           </ListItem>
         </List>

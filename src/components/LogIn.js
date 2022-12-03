@@ -1,7 +1,7 @@
 import { Button, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useState } from "react";
-import { auth } from "../utils/firebase";
+import { auth } from "../utils/Firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
@@ -31,7 +31,7 @@ function LogIn() {
       if (err.code === "auth/invalid-email") {
         setEmailError("Sähköpostin pitää olla muodossa 'email@email.com'.");
       } else if (err.code === "auth/user-not-found") {
-        setEmailError("Sähköpostiosoitteella ei ole käytäjätunnusta.");
+        setEmailError("Sähköpostiosoitteella ei ole käyttäjätunnusta.");
       } else if (err.code === "auth/wrong-password") {
         setPwdError("Väärä salasana.");
       } else {

@@ -17,14 +17,19 @@ import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import axios from "axios";
 import { useLocation } from "react-router";
 import { useNavigate } from "react-router-dom";
-import { timeMarks, portionMarks } from "../utils/utils";
+import { timeMarks, portionMarks } from "../utils/Utils";
+import { auth } from "../utils/Firebase";
+import { containerBox } from "../utils/Theme";
 
 function EditRecipe() {
   const params = useLocation().state.recipe;
+  const user = auth.currentUser;
   const [error, setError] = useState("");
   const [incredientList, setIncredientList] = useState(params.incredients);
   const [recipe, setValues] = useState(params);
   const navigate = useNavigate();
+
+  console.log(recipe);
 
   const handleChange = (e) => {
     setValues({
@@ -86,6 +91,8 @@ function EditRecipe() {
     formData.append("category", recipe.category);
     formData.append("incredients", incredients);
     formData.append("date", new Date());
+    formData.append("userName", user.displayName);
+    formData.append("userId", user.uid);
     formData.append("id", recipe.id);
     try {
       await axios.post("http://localhost:8080/recipes/edit", formData);
@@ -96,24 +103,14 @@ function EditRecipe() {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        flexDirection: "column",
-        paddingTop: 15,
-        minHeight: "100vh",
-        backgroundImage:
-          "linear-gradient(90deg, rgba(138,136,179,1) 0%, rgba(153,123,154,1) 100%)",
-      }}
-    >
+    <Box sx={containerBox}>
       <Paper
         sx={{
           width: 600,
           padding: 5,
           display: "flex",
           flexDirection: "column",
-          bgcolor: "rgba(255, 255, 255, 0.65)",
+          bgcolor: "background.paper",
         }}
         component="form"
       >

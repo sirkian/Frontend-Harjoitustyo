@@ -17,7 +17,7 @@ import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import { Link, Outlet } from "react-router-dom";
-import { auth } from "../../utils/firebase";
+import { auth } from "../../utils/Firebase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
@@ -31,11 +31,6 @@ function Topbar() {
   };
 
   const handleCloseMenu = () => {
-    setMenu(null);
-  };
-
-  const handleSignOut = () => {
-    signOut(auth);
     setMenu(null);
   };
 
@@ -114,7 +109,7 @@ function Topbar() {
                       </ListItemIcon>
                       <ListItemText primary="Suosikit" />
                     </MenuItem>
-                    <MenuItem onClick={handleSignOut}>
+                    <MenuItem onClick={() => signOut(auth)}>
                       <ListItemIcon>
                         <LogoutOutlinedIcon />
                       </ListItemIcon>

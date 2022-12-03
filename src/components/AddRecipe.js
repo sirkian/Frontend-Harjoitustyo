@@ -17,9 +17,12 @@ import {
 } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import axios from "axios";
-import { timeMarks, portionMarks } from "../utils/utils";
+import { timeMarks, portionMarks } from "../utils/Utils";
+import { auth } from "../utils/Firebase";
+import { containerBox } from "../utils/Theme";
 
 function AddRecipe() {
+  const user = auth.currentUser;
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
   const [incredientList, setIncredientList] = useState([{ incredient: "" }]);
@@ -93,6 +96,8 @@ function AddRecipe() {
     formData.append("category", recipe.category);
     formData.append("incredients", incredients);
     formData.append("date", new Date());
+    formData.append("userName", user.displayName);
+    formData.append("userId", user.uid);
     try {
       await axios.post("http://localhost:8080/recipes/add", formData);
       setOpen(true);
@@ -118,24 +123,14 @@ function AddRecipe() {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        flexDirection: "column",
-        paddingTop: 15,
-        minHeight: "100vh",
-        backgroundImage:
-          "linear-gradient(90deg, rgba(138,136,179,1) 0%, rgba(153,123,154,1) 100%)",
-      }}
-    >
+    <Box sx={containerBox}>
       <Paper
         sx={{
           width: 600,
           padding: 5,
           display: "flex",
           flexDirection: "column",
-          bgcolor: "rgba(255, 255, 255, 0.65)",
+          bgcolor: "background.paper",
         }}
         component="form"
       >

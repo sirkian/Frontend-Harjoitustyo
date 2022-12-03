@@ -32,6 +32,32 @@ app.get("/recipes/all", (req, res) => {
   });
 });
 
+app.get("/recipes/all/:userId", (req, res) => {
+  const userId = req.params.userId;
+  db.all("SELECT * FROM recipe WHERE userId = ?", [userId], (error, result) => {
+    if (error) throw error;
+    if (typeof result === "undefined") {
+      return res.status(200).json({});
+    }
+    return res.status(200).json(result);
+  });
+});
+
+app.get("/recipes/search/:query", (req, res) => {
+  const query = req.params.query;
+  db.all(
+    "SELECT * FROM recipe WHERE name LIKE ?",
+    ["%" + query + "%"],
+    (error, result) => {
+      if (error) throw error;
+      if (typeof result === "undefined") {
+        return res.status(200).json({});
+      }
+      return res.status(200).json(result);
+    }
+  );
+});
+
 app.get("/recipes/:id", (req, res) => {
   let id = req.params.id;
   db.get("SELECT * FROM recipe WHERE id = ?", [id], (error, result) => {
@@ -50,7 +76,7 @@ app.post("/recipes/add", upload.single("image"), (req, res) => {
     fileName = req.file.originalname;
   }
   db.run(
-    "INSERT INTO recipe (name, time, portions, description, instructions, image, category, incredients, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO recipe (name, time, portions, description, instructions, image, category, incredients, date, userName, userId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
     [
       file.name,
       file.time,
@@ -61,6 +87,8 @@ app.post("/recipes/add", upload.single("image"), (req, res) => {
       file.category,
       file.incredients,
       file.date,
+      file.userName,
+      file.userId,
     ],
     (error, result) => {
       if (error) throw error;
@@ -76,7 +104,7 @@ app.post("/recipes/edit/", upload.single("image"), (req, res) => {
     fileName = req.file.originalname;
   }
   db.run(
-    "UPDATE recipe SET name = ?, time = ?, portions = ?, description = ?, instructions = ?, image = ?, category = ?, incredients = ?, date = ? WHERE id = ?",
+    "UPDATE recipe SET name = ?, time = ?, portions = ?, description = ?, instructions = ?, image = ?, category = ?, incredients = ?, date = ?, userName = ?, userId = ? WHERE id = ?",
     [
       file.name,
       file.time,
@@ -87,6 +115,8 @@ app.post("/recipes/edit/", upload.single("image"), (req, res) => {
       file.category,
       file.incredients,
       file.date,
+      file.userName,
+      file.userId,
       file.id,
     ],
     (error, result) => {
