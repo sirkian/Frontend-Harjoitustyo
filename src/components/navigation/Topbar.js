@@ -10,27 +10,32 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import { Link, Outlet } from "react-router-dom";
+import { auth } from "../../utils/firebase";
+import { signOut } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 function Topbar() {
+  const user = auth.currentUser;
+  const navigate = useNavigate();
   const [menu, setMenu] = useState(null);
-  const user = {
-    ID: 1,
-    nickname: "perttiplaceholder",
-    email: "pera@gmail.com",
-  };
 
   const handleOpenMenu = (e) => {
     setMenu(e.currentTarget);
   };
 
   const handleCloseMenu = () => {
+    setMenu(null);
+  };
+
+  const handleSignOut = () => {
+    signOut(auth);
     setMenu(null);
   };
 
@@ -64,45 +69,68 @@ function Topbar() {
               display: "flex",
             }}
           >
-            <IconButton onClick={handleOpenMenu}>
-              <AccountCircleOutlinedIcon fontSize="large" color="secondary" />
-            </IconButton>
-            <MenuList>
-              <Menu
-                anchorEl={menu}
-                anchorOrigin={{ vertical: 60, horizontal: 0 }}
-                open={Boolean(menu)}
-                onClose={handleCloseMenu}
+            {user !== null ? (
+              <>
+                <IconButton onClick={handleOpenMenu}>
+                  <AccountCircleOutlinedIcon
+                    fontSize="large"
+                    color="secondary"
+                  />
+                </IconButton>
+                <MenuList>
+                  <Menu
+                    anchorEl={menu}
+                    anchorOrigin={{ vertical: 60, horizontal: 0 }}
+                    open={Boolean(menu)}
+                    onClose={handleCloseMenu}
+                  >
+                    <MenuItem>
+                      <Typography>Moikka, {user.displayName} !</Typography>
+                    </MenuItem>
+                    <MenuItem
+                      component={Link}
+                      to={"user/" + user.uid + "/settings"}
+                    >
+                      <ListItemIcon>
+                        <AdminPanelSettingsOutlinedIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Asetukset" />
+                    </MenuItem>
+                    <MenuItem
+                      component={Link}
+                      to={"user/" + user.uid + "/recipes"}
+                    >
+                      <ListItemIcon>
+                        <MenuBookOutlinedIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Omat reseptit" />
+                    </MenuItem>
+                    <MenuItem
+                      component={Link}
+                      to={"user/" + user.uid + "/liked"}
+                    >
+                      <ListItemIcon>
+                        <FavoriteBorderOutlinedIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Suosikit" />
+                    </MenuItem>
+                    <MenuItem onClick={handleSignOut}>
+                      <ListItemIcon>
+                        <LogoutOutlinedIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Kirjaudu ulos" />
+                    </MenuItem>
+                  </Menu>
+                </MenuList>
+              </>
+            ) : (
+              <Typography
+                sx={{ cursor: "pointer" }}
+                onClick={() => navigate("/login")}
               >
-                <MenuItem component={Link} to={"user/" + user.ID + "/settings"}>
-                  <ListItemIcon>
-                    <AdminPanelSettingsOutlinedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Asetukset" />
-                </MenuItem>
-
-                <MenuItem component={Link} to={"user/" + user.ID + "/recipes"}>
-                  <ListItemIcon>
-                    <MenuBookOutlinedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Omat reseptit" />
-                </MenuItem>
-
-                <MenuItem component={Link} to={"user/" + user.ID + "/liked"}>
-                  <ListItemIcon>
-                    <FavoriteBorderOutlinedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Suosikit" />
-                </MenuItem>
-
-                <MenuItem onClick={handleCloseMenu}>
-                  <ListItemIcon>
-                    <LogoutOutlinedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Kirjaudu ulos" />
-                </MenuItem>
-              </Menu>
-            </MenuList>
+                Kirjaudu sisään
+              </Typography>
+            )}
           </Box>
         </Toolbar>
       </AppBar>

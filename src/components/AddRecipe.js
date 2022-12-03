@@ -17,55 +17,14 @@ import {
 } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import axios from "axios";
-
-const timeMarks = [
-  {
-    value: 10,
-    label: "<10 min",
-  },
-  {
-    value: 45,
-    label: "45 min",
-  },
-  {
-    value: 90,
-    label: "90+ min",
-  },
-];
-
-const portionMarks = [
-  {
-    value: 1,
-    label: "1",
-  },
-  {
-    value: 2,
-    label: "2",
-  },
-  {
-    value: 3,
-    label: "3",
-  },
-  {
-    value: 4,
-    label: "4",
-  },
-  {
-    value: 5,
-    label: "5",
-  },
-  {
-    value: 6,
-    label: "6+",
-  },
-];
+import { timeMarks, portionMarks } from "../utils/utils";
 
 function AddRecipe() {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
   const [incredientList, setIncredientList] = useState([{ incredient: "" }]);
   const [recipe, setValues] = useState({
-    recipeName: "",
+    name: "",
     description: "",
     instructions: "",
     time: 10,
@@ -106,7 +65,7 @@ function AddRecipe() {
   };
 
   const validate = () => {
-    if (recipe.recipeName.length < 3)
+    if (recipe.name.length < 3)
       return setError("Nimen pitää olla vähintään 3 merkkiä pitkä!");
     if (incredientList[0].incredient.length === 0)
       return setError("Lisää vähintään yksi raaka-aine!");
@@ -125,7 +84,7 @@ function AddRecipe() {
       incredients = incredients + incredientList[i].incredient + "|";
     }
     const formData = new FormData();
-    formData.append("name", recipe.recipeName);
+    formData.append("name", recipe.name);
     formData.append("time", recipe.time);
     formData.append("portions", recipe.portions);
     formData.append("description", recipe.description);
@@ -148,7 +107,7 @@ function AddRecipe() {
     setIncredientList([{ incredient: "" }]);
     setError("");
     setValues({
-      recipeName: "",
+      name: "",
       description: "",
       instructions: "",
       time: 10,
@@ -186,8 +145,8 @@ function AddRecipe() {
         <FormControl>
           <TextField
             label="Nimi"
-            name="recipeName"
-            value={recipe.recipeName}
+            name="name"
+            value={recipe.name}
             onChange={(e) => handleChange(e)}
             required
           />

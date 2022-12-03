@@ -1,3 +1,4 @@
+import React, { useContext, useEffect, useState } from "react";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navigation from "./components/navigation/Navigation";
@@ -8,6 +9,11 @@ import Settings from "./components/user/Settings";
 import OwnRecipes from "./components/user/OwnRecipes";
 import Liked from "./components/user/Liked";
 import ShowRecipes from "./components/ShowRecipes";
+import { auth } from "./utils/firebase";
+import AuthenticatedUserProvider from "./components/navigation/AuthenticatedUserProvider";
+import { AuthenticatedUserContext } from "./components/navigation/AuthenticatedUserProvider";
+import SignUp from "./components/SignUp";
+import LogIn from "./components/LogIn";
 
 const semiTransparent = "rgba(255, 255, 255, 0.55)";
 const theme = createTheme({
@@ -58,23 +64,44 @@ const theme = createTheme({
 });
 
 function App() {
+  const { user, setUser } = useContext(AuthenticatedUserContext);
+
+  useEffect(() => {
+    const unsubscribeAuth = auth.onAuthStateChanged(
+      async (authenticatedUser) => {
+        try {
+          await (authenticatedUser
+            ? setUser(authenticatedUser)
+            : setUser(null));
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    );
+    return unsubscribeAuth;
+  }, []);
+
   return (
-    <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigation />}>
-            <Route index element={<ShowRecipes />} />
-            <Route path="add" element={<AddRecipe />} />
-            <Route path="edit" element={<EditRecipe />} />
-            <Route path="user/:ID/settings" element={<Settings />} />
-            <Route path="user/:ID/recipes" element={<OwnRecipes />} />
-            <Route path="user/:ID/liked" element={<Liked />} />
-            <Route path="*" element={<Error />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-      <CssBaseline />
-    </ThemeProvider>
+    <AuthenticatedUserProvider>
+      <ThemeProvider theme={theme}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Navigation />}>
+              <Route index element={<ShowRecipes />} />
+              <Route path="add" element={<AddRecipe />} />
+              <Route path="edit" element={<EditRecipe />} />
+              <Route path="user/:ID/settings" element={<Settings />} />
+              <Route path="user/:ID/recipes" element={<OwnRecipes />} />
+              <Route path="user/:ID/liked" element={<Liked />} />
+              <Route path="*" element={<Error />} />
+            </Route>
+            <Route path="login" element={<LogIn />} />
+            <Route path="signup" element={<SignUp />} />
+          </Routes>
+        </BrowserRouter>
+        <CssBaseline />
+      </ThemeProvider>
+    </AuthenticatedUserProvider>
   );
 }
 
