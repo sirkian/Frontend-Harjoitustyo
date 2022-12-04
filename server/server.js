@@ -58,6 +58,21 @@ app.get("/recipes/search/:query", (req, res) => {
   );
 });
 
+app.get("/recipes/liked/:userId", (req, res) => {
+  const userId = req.params.userId;
+  db.all(
+    "SELECT * FROM recipe WHERE id = (SELECT recipeId FROM liked WHERE userId = ?)",
+    [userId],
+    (error, result) => {
+      if (error) throw error;
+      if (typeof result === "undefined") {
+        return res.status(200).json({});
+      }
+      return res.status(200).json(result);
+    }
+  );
+});
+
 app.get("/recipes/:id", (req, res) => {
   let id = req.params.id;
   db.get("SELECT * FROM recipe WHERE id = ?", [id], (error, result) => {
@@ -126,6 +141,19 @@ app.post("/recipes/edit/", upload.single("image"), (req, res) => {
   );
 });
 
+app.post("/recipes/like/:id/:userId", (req, res) => {
+  const id = req.params.id;
+  const userId = req.params.userId;
+  db.run(
+    "INSERT INTO liked (recipeId, userId) VALUES (?, ?)",
+    [id, userId],
+    (error, result) => {
+      if (error) throw error;
+      return res.status(200).json({ count: 1 });
+    }
+  );
+});
+
 app.get("/recipes/delete/:id", (req, res) => {
   const id = req.params.id;
   db.run("DELETE FROM recipe WHERE id = ?", [id], function (error, result) {
@@ -137,6 +165,13 @@ app.get("/recipes/delete/:id", (req, res) => {
 app.get("/recipes/download/:name", (req, res) => {
   let file = "./img/" + req.params.name;
   res.download(file);
+});
+
+app.get("/categories/all", (req, res) => {
+  db.all("SELECT * FROM categories", (error, result) => {
+    if (error) throw error;
+    return res.status(200).json(result);
+  });
 });
 
 app.get("*", (req, res) => {

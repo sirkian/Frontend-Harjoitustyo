@@ -6,10 +6,12 @@ import { containerBox } from "../utils/Theme";
 import { useLocation } from "react-router";
 
 function ShowRecipes() {
-  const params = useLocation().state;
+  const loc = useLocation();
+  const params = loc.state;
   const [recipes, setRecipes] = useState([]);
   const [errorMsg, setErrorMsg] = useState("Haetaan reseptejä...");
   const [query, setQuery] = useState("");
+  console.log(recipes);
 
   useEffect(() => {
     fetchRecipes();
@@ -34,24 +36,33 @@ function ShowRecipes() {
         return;
       }
       setQuery(params.query);
+      if (query.length > 0) {
+        searchRecipes();
+      }
     } else {
       return;
     }
-    if (query.length > 0) {
-      searchRecipes();
-    }
-  }, [params]);
+  }, [loc.key]);
 
   const searchRecipes = async () => {
-    console.log("HAETAA", query);
     try {
       const res = await axios.get(
         "http://localhost:8080/recipes/search/" + query
       );
       console.log("DATA", res.data.length);
-      if (res.data.length === 0) return;
+      if (res.data.length === 0 && typeof query !== "undefined") {
+        setErrorMsg("Haulla " + query + " ei löytynyt reseptejä");
+        setQuery("");
+        return;
+      }
       setRecipes(res.data);
-      setErrorMsg("");
+      res.data.length > 1 && typeof query !== "undefined"
+        ? setErrorMsg(
+            "Haulla " + query + " löytyi " + res.data.length + " reseptiä:"
+          )
+        : setErrorMsg(
+            "Haulla " + query + " löytyi " + res.data.length + " resepti:"
+          );
       setQuery("");
     } catch (error) {
       setRecipes([]);
@@ -60,10 +71,9 @@ function ShowRecipes() {
     }
   };
 
-  console.log(recipes);
-
   return (
     <Box sx={containerBox}>
+      {errorMsg.length > 0 && <Typography>{errorMsg}</Typography>}
       {recipes
         .slice(0)
         .reverse()
@@ -71,7 +81,6 @@ function ShowRecipes() {
           return <RecipeCard recipe={recipe} i={i} isOwnRecipe={false} />;
         })}
       {recipes.length === 0 && <Typography>Ei reseptejä (vielä!).</Typography>}
-      {errorMsg.length > 0 && <Typography>{errorMsg}</Typography>}
     </Box>
   );
 }

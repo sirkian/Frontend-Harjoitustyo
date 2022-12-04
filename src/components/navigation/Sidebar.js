@@ -21,6 +21,11 @@ function Sidebar({ darkMode, setDarkMode }) {
   const [query, setQuery] = useState("");
   const clear = true;
 
+  const handleClear = () => {
+    setQuery("");
+    navigate("/", { state: { clear, query } });
+  };
+
   return (
     <Box>
       <Outlet />
@@ -45,14 +50,23 @@ function Sidebar({ darkMode, setDarkMode }) {
               onChange={(e) => setQuery(e.target.value)}
             />
             <IconButton
-              sx={{ left: -50 }}
+              sx={{ left: -50, color: "text.secondary" }}
               onClick={() => navigate("/", { state: { query } })}
             >
               <SearchIcon />
             </IconButton>
-            <IconButton sx={{ left: -40 }} onClick={() => navigate(-1)}>
-              <ClearIcon />
-            </IconButton>
+            {query.length > 0 && (
+              <IconButton
+                sx={{
+                  left: 270,
+                  color: "text.secondary",
+                  position: "absolute",
+                }}
+                onClick={handleClear}
+              >
+                <ClearIcon />
+              </IconButton>
+            )}
           </ListItem>
           <ListItem>
             <ListItem button component={Link} to="/">

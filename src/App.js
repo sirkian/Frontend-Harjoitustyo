@@ -15,6 +15,7 @@ import { AuthenticatedUserContext } from "./components/navigation/AuthenticatedU
 import SignUp from "./components/SignUp";
 import LogIn from "./components/LogIn";
 import { lightTheme, darkTheme } from "./utils/Theme";
+import Categories from "./components/Categories";
 
 function App() {
   const { user, setUser } = useContext(AuthenticatedUserContext);
@@ -49,6 +50,7 @@ function App() {
               <Route index element={<ShowRecipes />} />
               <Route path="add" element={<AddRecipe />} />
               <Route path="edit" element={<EditRecipe />} />
+              <Route path="categories" element={<Categories />} />
               <Route path="user/:ID/settings" element={<Settings />} />
               <Route path="user/:ID/recipes" element={<OwnRecipes />} />
               <Route path="user/:ID/liked" element={<Liked />} />

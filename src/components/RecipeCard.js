@@ -20,14 +20,28 @@ import EditIcon from "@mui/icons-material/Edit";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import IconButton from "@mui/material/IconButton";
 import { ExpandMore } from "../utils/Utils";
+import axios from "axios";
+import { auth } from "../utils/Firebase";
 
 function RecipeCard(props) {
   const [expanded, setExpanded] = useState(-1);
   const [open, setOpen] = useState(false);
   const { recipe, i, isOwnRecipe, handleEdit, handleDelete } = props;
+  const user = auth.currentUser;
 
   const handleExpand = (i) => {
     setExpanded(expanded === i ? -1 : i);
+  };
+
+  const handleLike = async (id) => {
+    if (user === null) return;
+    try {
+      await axios.post(
+        "http://localhost:8080/recipes/like/" + id + "/" + user.uid
+      );
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -40,39 +54,50 @@ function RecipeCard(props) {
         }}
         key={recipe.id}
       >
-        <CardHeader title={recipe.name} subheader={recipe.userName} />
+        <CardHeader
+          title={recipe.name.toUpperCase()}
+          subheader={recipe.userName}
+          sx={{ textAlign: "center" }}
+        />
 
         <CardMedia
           component="img"
-          height="194"
+          height="250"
           src={"http://localhost:8080/recipes/download/" + recipe.image}
           alt={recipe.image}
         />
 
         <CardContent>
-          <Typography>{recipe.date.substr(3, 12)}</Typography>
+          <Typography sx={{ fontSize: 14, color: "text.secondary" }}>
+            {recipe.date.substr(3, 12)}
+          </Typography>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {recipe.time.length > 0 && (
-              <Typography>
+              <Typography sx={{ fontWeight: "light" }}>
                 Valmistusaika: <b>{recipe.time}</b> min.
               </Typography>
             )}
             {recipe.portions.length > 0 && (
-              <Typography>
+              <Typography sx={{ fontWeight: "light" }}>
                 Annosmäärä: <b>{recipe.portions}</b> annosta
               </Typography>
             )}
           </Box>
           <Typography
-            sx={{ mt: 3, fontSize: 14, textAlign: "center" }}
             paragraph
+            sx={{
+              mt: 3,
+              fontSize: 14,
+              textAlign: "center",
+              fontWeight: "light",
+            }}
           >
             {recipe.description}
           </Typography>
         </CardContent>
 
         <CardActions disableSpacing>
-          <IconButton color="secondary">
+          <IconButton color="secondary" onClick={() => handleLike(recipe.id)}>
             <FavoriteIcon />
           </IconButton>
           <ExpandMore
@@ -100,21 +125,31 @@ function RecipeCard(props) {
 
         <Collapse in={expanded === i} timeout="auto" unmountOnExit>
           <CardContent>
-            <Box>
-              <Typography variant="h5">Raaka-aineet:</Typography>
-              <List>
+            <Box sx={{ marginLeft: 3 }}>
+              <Typography variant="h6">Raaka-aineet:</Typography>
+              <List dense>
                 {recipe.incredients.split("|").map((list, index) => {
                   return (
-                    <ListItem key={index}>
+                    <ListItem sx={{ marginBottom: -1 }} key={index}>
                       <ListItemText primary={list} />
                     </ListItem>
                   );
                 })}
               </List>
             </Box>
-            <Box>
-              <Typography variant="h5">Valmistusohje:</Typography>
-              <Typography paragraph>{recipe.instructions}</Typography>
+            <Box sx={{ marginX: 3, marginTop: 3 }}>
+              <Typography variant="h6">Valmistusohje:</Typography>
+              <Typography
+                paragraph
+                sx={{
+                  fontSize: 16,
+                  fontWeight: "light",
+                  marginX: 2,
+                  marginY: 3,
+                }}
+              >
+                {recipe.instructions}
+              </Typography>
             </Box>
           </CardContent>
         </Collapse>

@@ -83,6 +83,7 @@ function Topbar() {
                       <Typography>Moikka, {user.displayName} !</Typography>
                     </MenuItem>
                     <MenuItem
+                      onClick={handleCloseMenu}
                       component={Link}
                       to={"user/" + user.uid + "/settings"}
                     >
@@ -92,6 +93,7 @@ function Topbar() {
                       <ListItemText primary="Asetukset" />
                     </MenuItem>
                     <MenuItem
+                      onClick={handleCloseMenu}
                       component={Link}
                       to={"user/" + user.uid + "/recipes"}
                     >
@@ -101,6 +103,7 @@ function Topbar() {
                       <ListItemText primary="Omat reseptit" />
                     </MenuItem>
                     <MenuItem
+                      onClick={handleCloseMenu}
                       component={Link}
                       to={"user/" + user.uid + "/liked"}
                     >
