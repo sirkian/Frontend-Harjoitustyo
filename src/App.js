@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
-import { CssBaseline, Menu, ThemeProvider } from "@mui/material";
+import React, { useState } from "react";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navigation from "./components/navigation/Navigation";
 import AddRecipe from "./components/AddRecipe";
 import EditRecipe from "./components/EditRecipe";
 import Error from "./components/navigation/Error";
@@ -9,32 +8,15 @@ import Settings from "./components/user/Settings";
 import OwnRecipes from "./components/user/OwnRecipes";
 import Liked from "./components/user/Liked";
 import ShowRecipes from "./components/ShowRecipes";
-import { auth } from "./utils/Firebase";
 import AuthenticatedUserProvider from "./components/navigation/AuthenticatedUserProvider";
-import { AuthenticatedUserContext } from "./components/navigation/AuthenticatedUserProvider";
 import SignUp from "./components/SignUp";
 import LogIn from "./components/LogIn";
 import { lightTheme, darkTheme } from "./utils/Theme";
 import Categories from "./components/Categories";
+import Sidebar from "./components/navigation/Sidebar";
 
 function App() {
-  const { user, setUser } = useContext(AuthenticatedUserContext);
   const [darkMode, setDarkMode] = useState(false);
-
-  useEffect(() => {
-    const unsubscribeAuth = auth.onAuthStateChanged(
-      async (authenticatedUser) => {
-        try {
-          await (authenticatedUser
-            ? setUser(authenticatedUser)
-            : setUser(null));
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    );
-    return unsubscribeAuth;
-  }, []);
 
   return (
     <AuthenticatedUserProvider>
@@ -44,7 +26,7 @@ function App() {
             <Route
               path="/"
               element={
-                <Navigation darkMode={darkMode} setDarkMode={setDarkMode} />
+                <Sidebar darkMode={darkMode} setDarkMode={setDarkMode} />
               }
             >
               <Route index element={<ShowRecipes />} />

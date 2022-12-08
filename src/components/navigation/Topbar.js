@@ -10,7 +10,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
@@ -85,7 +85,7 @@ function Topbar() {
                     <MenuItem
                       onClick={handleCloseMenu}
                       component={Link}
-                      to={"user/" + user.uid + "/settings"}
+                      to={"/user/" + user.uid + "/settings"}
                     >
                       <ListItemIcon>
                         <AdminPanelSettingsOutlinedIcon />
@@ -95,7 +95,7 @@ function Topbar() {
                     <MenuItem
                       onClick={handleCloseMenu}
                       component={Link}
-                      to={"user/" + user.uid + "/recipes"}
+                      to={"/user/" + user.uid + "/recipes"}
                     >
                       <ListItemIcon>
                         <MenuBookOutlinedIcon />
@@ -105,7 +105,7 @@ function Topbar() {
                     <MenuItem
                       onClick={handleCloseMenu}
                       component={Link}
-                      to={"user/" + user.uid + "/liked"}
+                      to={"/user/" + user.uid + "/liked"}
                     >
                       <ListItemIcon>
                         <FavoriteBorderOutlinedIcon />
@@ -123,7 +123,7 @@ function Topbar() {
               </>
             ) : (
               <Typography
-                sx={{ cursor: "pointer" }}
+                sx={{ cursor: "pointer", color: "text.primary" }}
                 onClick={() => navigate("/login")}
               >
                 Kirjaudu sisään

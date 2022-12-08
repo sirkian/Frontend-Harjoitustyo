@@ -6,7 +6,6 @@ import {
   ListItemText,
   TextField,
   Box,
-  Button,
   IconButton,
 } from "@mui/material";
 import { Link, Outlet } from "react-router-dom";
@@ -50,7 +49,7 @@ function Sidebar({ darkMode, setDarkMode }) {
               onChange={(e) => setQuery(e.target.value)}
             />
             <IconButton
-              sx={{ left: -50, color: "text.secondary" }}
+              sx={{ left: -50, color: "text.contrast" }}
               onClick={() => navigate("/", { state: { query } })}
             >
               <SearchIcon />
@@ -59,7 +58,7 @@ function Sidebar({ darkMode, setDarkMode }) {
               <IconButton
                 sx={{
                   left: 270,
-                  color: "text.secondary",
+                  color: "text.contrast",
                   position: "absolute",
                 }}
                 onClick={handleClear}
@@ -81,11 +80,6 @@ function Sidebar({ darkMode, setDarkMode }) {
           <ListItem>
             <ListItem button component={Link} to="categories">
               <ListItemText primary="Kategoriat" />
-            </ListItem>
-          </ListItem>
-          <ListItem>
-            <ListItem button component={Link} to="mealdb">
-              <ListItemText primary="Inspiraatio" />
             </ListItem>
           </ListItem>
           <ListItem>

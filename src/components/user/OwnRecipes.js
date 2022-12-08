@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Alert, Snackbar } from "@mui/material";
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { auth } from "../../utils/Firebase";
 import { containerBox } from "../../utils/Theme";
 import RecipeCard from "../RecipeCard";
+import Topbar from "../navigation/Topbar";
 
 function OwnRecipes() {
   const [recipes, setRecipes] = useState([]);
@@ -16,10 +17,12 @@ function OwnRecipes() {
 
   useEffect(() => {
     fetchRecipes();
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     fetchRecipes();
+    // eslint-disable-next-line
   }, [recipes.length]);
 
   const fetchRecipes = async () => {
@@ -64,25 +67,45 @@ function OwnRecipes() {
   };
 
   return (
-    <Box sx={containerBox}>
-      {recipes
-        .slice(0)
-        .reverse()
-        .map((recipe, i) => {
-          return (
-            <RecipeCard
-              recipe={recipe}
-              i={i}
-              isOwnRecipe={true}
-              handleEdit={handleEdit}
-              handleDelete={handleDelete}
-            />
-          );
-        })}
+    <>
+      <Topbar />
+      <Box sx={containerBox}>
+        {recipes
+          .slice(0)
+          .reverse()
+          .map((recipe, i) => {
+            return (
+              <RecipeCard
+                key={recipe.id}
+                recipe={recipe}
+                i={i}
+                isOwnRecipe={true}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+              />
+            );
+          })}
 
-      {recipes.length === 0 && <Typography>Ei reseptejä (vielä!).</Typography>}
-      {errorMsg.length > 0 && <Typography>{errorMsg}</Typography>}
-    </Box>
+        {recipes.length === 0 && (
+          <Typography>Ei omia reseptejä (vielä!).</Typography>
+        )}
+        {errorMsg.length > 0 && <Typography>{errorMsg}</Typography>}
+        <Snackbar
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          open={open}
+          onClose={() => setOpen(false)}
+          autoHideDuration={6000}
+        >
+          <Alert
+            onClose={() => setOpen(false)}
+            severity="warning"
+            sx={{ width: "100%" }}
+          >
+            Recipe deleted!
+          </Alert>
+        </Snackbar>
+      </Box>
+    </>
   );
 }
 

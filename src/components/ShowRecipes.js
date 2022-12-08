@@ -4,17 +4,17 @@ import axios from "axios";
 import RecipeCard from "./RecipeCard";
 import { containerBox } from "../utils/Theme";
 import { useLocation } from "react-router";
+import Topbar from "./navigation/Topbar";
 
 function ShowRecipes() {
   const loc = useLocation();
   const params = loc.state;
   const [recipes, setRecipes] = useState([]);
   const [errorMsg, setErrorMsg] = useState("Haetaan reseptejä...");
-  const [query, setQuery] = useState("");
-  console.log(recipes);
 
   useEffect(() => {
     fetchRecipes();
+    // eslint-disable-next-line
   }, []);
 
   const fetchRecipes = async () => {
@@ -30,30 +30,24 @@ function ShowRecipes() {
   };
 
   useEffect(() => {
-    if (params !== null) {
-      if (params.clear) {
-        fetchRecipes();
-        return;
-      }
-      setQuery(params.query);
-      if (query.length > 0) {
-        searchRecipes();
-      }
-    } else {
+    if (params === null) return;
+    if (params.clear) {
+      fetchRecipes();
       return;
+    } else if (params.query.length > 0) {
+      searchRecipes(params.query);
     }
+    // eslint-disable-next-line
   }, [loc.key]);
 
-  const searchRecipes = async () => {
+  const searchRecipes = async (query) => {
     try {
       const res = await axios.get(
         "http://localhost:8080/recipes/search/" + query
       );
-      console.log("DATA", res.data.length);
       if (res.data.length === 0 && typeof query !== "undefined") {
         setErrorMsg("Haulla " + query + " ei löytynyt reseptejä");
-        setQuery("");
-        return;
+        return (query = "");
       }
       setRecipes(res.data);
       res.data.length > 1 && typeof query !== "undefined"
@@ -63,7 +57,7 @@ function ShowRecipes() {
         : setErrorMsg(
             "Haulla " + query + " löytyi " + res.data.length + " resepti:"
           );
-      setQuery("");
+      query = "";
     } catch (error) {
       setRecipes([]);
       setErrorMsg("Haku epäonnistui.");
@@ -72,16 +66,28 @@ function ShowRecipes() {
   };
 
   return (
-    <Box sx={containerBox}>
-      {errorMsg.length > 0 && <Typography>{errorMsg}</Typography>}
-      {recipes
-        .slice(0)
-        .reverse()
-        .map((recipe, i) => {
-          return <RecipeCard recipe={recipe} i={i} isOwnRecipe={false} />;
-        })}
-      {recipes.length === 0 && <Typography>Ei reseptejä (vielä!).</Typography>}
-    </Box>
+    <>
+      <Topbar />
+      <Box sx={containerBox}>
+        {errorMsg.length > 0 && <Typography>{errorMsg}</Typography>}
+        {recipes
+          .slice(0)
+          .reverse()
+          .map((recipe, i) => {
+            return (
+              <RecipeCard
+                key={recipe.id}
+                recipe={recipe}
+                i={i}
+                isOwnRecipe={false}
+              />
+            );
+          })}
+        {recipes.length === 0 && (
+          <Typography>Ei reseptejä (vielä!).</Typography>
+        )}
+      </Box>
+    </>
   );
 }
 

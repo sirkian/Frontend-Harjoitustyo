@@ -4,6 +4,7 @@ import axios from "axios";
 import RecipeCard from "../RecipeCard";
 import { containerBox } from "../../utils/Theme";
 import { auth } from "../../utils/Firebase";
+import Topbar from "../navigation/Topbar";
 
 function Liked() {
   const [recipes, setRecipes] = useState([]);
@@ -12,6 +13,7 @@ function Liked() {
 
   useEffect(() => {
     fetchRecipes();
+    // eslint-disable-next-line
   }, []);
 
   const fetchRecipes = async () => {
@@ -29,16 +31,28 @@ function Liked() {
     }
   };
   return (
-    <Box sx={containerBox}>
-      {errorMsg.length > 0 && <Typography>{errorMsg}</Typography>}
-      {recipes
-        .slice(0)
-        .reverse()
-        .map((recipe, i) => {
-          return <RecipeCard recipe={recipe} i={i} isOwnRecipe={false} />;
-        })}
-      {recipes.length === 0 && <Typography>Ei reseptejä (vielä!).</Typography>}
-    </Box>
+    <>
+      <Topbar />
+      <Box sx={containerBox}>
+        {errorMsg.length > 0 && <Typography>{errorMsg}</Typography>}
+        {recipes
+          .slice(0)
+          .reverse()
+          .map((recipe, i) => {
+            return (
+              <RecipeCard
+                key={recipe.id}
+                recipe={recipe}
+                i={i}
+                isOwnRecipe={false}
+              />
+            );
+          })}
+        {recipes.length === 0 && (
+          <Typography>Ei reseptejä (vielä!).</Typography>
+        )}
+      </Box>
+    </>
   );
 }
 

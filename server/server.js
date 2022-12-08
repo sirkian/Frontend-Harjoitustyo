@@ -43,6 +43,21 @@ app.get("/recipes/all/:userId", (req, res) => {
   });
 });
 
+app.get("/recipes/category/:category", (req, res) => {
+  const category = req.params.category;
+  db.all(
+    "SELECT * FROM recipe WHERE category = ?",
+    [category],
+    (error, result) => {
+      if (error) throw error;
+      if (typeof result === "undefined") {
+        return res.status(200).json({});
+      }
+      return res.status(200).json(result);
+    }
+  );
+});
+
 app.get("/recipes/search/:query", (req, res) => {
   const query = req.params.query;
   db.all(
@@ -58,10 +73,29 @@ app.get("/recipes/search/:query", (req, res) => {
   );
 });
 
+app.get("/recipes/liked/all", (req, res) => {
+  db.all("SELECT * FROM liked", (error, result) => {
+    if (error) throw error;
+    return res.status(200).json(result);
+  });
+});
+
+app.get("/recipes/liked/count/:id", (req, res) => {
+  const id = req.params.id;
+  db.get(
+    "SELECT COUNT(liked_id) as likes FROM liked WHERE recipeId = ?",
+    [id],
+    (error, result) => {
+      if (error) throw error;
+      return res.status(200).json(result);
+    }
+  );
+});
+
 app.get("/recipes/liked/:userId", (req, res) => {
   const userId = req.params.userId;
   db.all(
-    "SELECT * FROM recipe WHERE id = (SELECT recipeId FROM liked WHERE userId = ?)",
+    "SELECT * FROM recipe r JOIN liked l ON r.id = l.recipeId WHERE l.userId = ? GROUP BY r.id",
     [userId],
     (error, result) => {
       if (error) throw error;
@@ -165,13 +199,6 @@ app.get("/recipes/delete/:id", (req, res) => {
 app.get("/recipes/download/:name", (req, res) => {
   let file = "./img/" + req.params.name;
   res.download(file);
-});
-
-app.get("/categories/all", (req, res) => {
-  db.all("SELECT * FROM categories", (error, result) => {
-    if (error) throw error;
-    return res.status(200).json(result);
-  });
 });
 
 app.get("*", (req, res) => {
