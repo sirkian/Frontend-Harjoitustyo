@@ -10,6 +10,7 @@ import Topbar from "../navigation/Topbar";
 
 function OwnRecipes() {
   const [recipes, setRecipes] = useState([]);
+  const [likes, setLikes] = useState([]);
   const [errorMsg, setErrorMsg] = useState("Haetaan reseptejä...");
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
@@ -30,7 +31,11 @@ function OwnRecipes() {
       const res = await axios.get(
         "http://localhost:8080/recipes/all/" + user.uid
       );
+      const likes = await axios.get(
+        "http://localhost:8080/recipes/liked/" + user.uid
+      );
       setRecipes(res.data);
+      setLikes(likes.data);
       setErrorMsg("");
     } catch (error) {
       setRecipes([]);
@@ -77,6 +82,7 @@ function OwnRecipes() {
             return (
               <RecipeCard
                 key={recipe.id}
+                likes={likes}
                 recipe={recipe}
                 i={i}
                 isOwnRecipe={true}
@@ -101,7 +107,7 @@ function OwnRecipes() {
             severity="warning"
             sx={{ width: "100%" }}
           >
-            Recipe deleted!
+            Resepti poistettu!
           </Alert>
         </Snackbar>
       </Box>

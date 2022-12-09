@@ -107,6 +107,19 @@ app.get("/recipes/liked/:userId", (req, res) => {
   );
 });
 
+app.get("/recipes/liked/delete/:recipeId/:userId", (req, res) => {
+  const recipeId = req.params.recipeId;
+  const userId = req.params.userId;
+  db.run(
+    "DELETE FROM liked WHERE recipeId = ? AND userId = ?",
+    [recipeId, userId],
+    function (error, result) {
+      if (error) throw error;
+      return res.status(200).json({ count: this.changes });
+    }
+  );
+});
+
 app.get("/recipes/:id", (req, res) => {
   let id = req.params.id;
   db.get("SELECT * FROM recipe WHERE id = ?", [id], (error, result) => {

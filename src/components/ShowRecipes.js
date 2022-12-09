@@ -5,12 +5,15 @@ import RecipeCard from "./RecipeCard";
 import { containerBox } from "../utils/Theme";
 import { useLocation } from "react-router";
 import Topbar from "./navigation/Topbar";
+import { auth } from "../utils/Firebase";
 
 function ShowRecipes() {
   const loc = useLocation();
   const params = loc.state;
   const [recipes, setRecipes] = useState([]);
+  const [likes, setLikes] = useState([]);
   const [errorMsg, setErrorMsg] = useState("Haetaan reseptejä...");
+  const user = auth.currentUser;
 
   useEffect(() => {
     fetchRecipes();
@@ -20,6 +23,12 @@ function ShowRecipes() {
   const fetchRecipes = async () => {
     try {
       const res = await axios.get("http://localhost:8080/recipes/all");
+      if (user) {
+        const likes = await axios.get(
+          "http://localhost:8080/recipes/liked/" + user.uid
+        );
+        setLikes(likes.data);
+      }
       setRecipes(res.data);
       setErrorMsg("");
     } catch (error) {
@@ -78,6 +87,7 @@ function ShowRecipes() {
               <RecipeCard
                 key={recipe.id}
                 recipe={recipe}
+                likes={likes}
                 i={i}
                 isOwnRecipe={false}
               />

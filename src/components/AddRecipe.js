@@ -341,7 +341,7 @@ function AddRecipe() {
             severity="success"
             sx={{ width: "100%" }}
           >
-            Recipe added!
+            Resepti lisätty!
           </Alert>
         </Snackbar>
       </Box>

@@ -8,6 +8,7 @@ import Topbar from "../navigation/Topbar";
 
 function Liked() {
   const [recipes, setRecipes] = useState([]);
+  const [likes, setLikes] = useState([]);
   const [errorMsg, setErrorMsg] = useState("Haetaan reseptejä...");
   const user = auth.currentUser;
 
@@ -21,8 +22,11 @@ function Liked() {
       const res = await axios.get(
         "http://localhost:8080/recipes/liked/" + user.uid
       );
+      const likes = await axios.get(
+        "http://localhost:8080/recipes/liked/" + user.uid
+      );
       setRecipes(res.data);
-      console.log(res.data);
+      setLikes(likes.data);
       setErrorMsg("");
     } catch (error) {
       setRecipes([]);
@@ -43,6 +47,7 @@ function Liked() {
               <RecipeCard
                 key={recipe.id}
                 recipe={recipe}
+                likes={likes}
                 i={i}
                 isOwnRecipe={false}
               />

@@ -6,6 +6,7 @@ import { containerBox } from "../utils/Theme";
 import Topbar from "./navigation/Topbar";
 import IconButton from "@mui/material/IconButton";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { auth } from "../utils/Firebase";
 
 function Categories() {
   const categories = [
@@ -19,7 +20,9 @@ function Categories() {
     "Jälkiruoat",
   ];
   const [recipes, setRecipes] = useState([]);
+  const [likes, setLikes] = useState([]);
   const [category, setCategory] = useState("");
+  const user = auth.currentUser;
 
   const handleShowCategory = async (i) => {
     setCategory("");
@@ -27,7 +30,14 @@ function Categories() {
       const res = await axios.get(
         "http://localhost:8080/recipes/category/" + categories[i]
       );
+      if (user) {
+        const likes = await axios.get(
+          "http://localhost:8080/recipes/liked/" + user.uid
+        );
+        setLikes(likes.data);
+      }
       setRecipes(res.data);
+
       setCategory(categories[i]);
     } catch (error) {
       setRecipes([]);
@@ -76,6 +86,7 @@ function Categories() {
               <RecipeCard
                 key={recipe.id}
                 recipe={recipe}
+                likes={likes}
                 i={i}
                 isOwnRecipe={false}
               />

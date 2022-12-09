@@ -1,5 +1,5 @@
 import { Box, List, ListItem, ListItemText, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
@@ -17,8 +17,17 @@ import { auth } from "../utils/Firebase";
 
 function RecipeCard(props) {
   const [expanded, setExpanded] = useState(-1);
-  const { recipe, i, isOwnRecipe, handleEdit, handleDelete } = props;
+  const [isLiked, setIsLiked] = useState(false);
+  const { recipe, i, isOwnRecipe, handleEdit, handleDelete, likes } = props;
   const user = auth.currentUser;
+
+  useEffect(() => {
+    if (user === null || typeof likes === "undefined") return;
+    likes.forEach((like) => {
+      if (recipe.id === like.id) setIsLiked(true);
+    });
+    // eslint-disable-next-line
+  }, []);
 
   const handleExpand = (i) => {
     setExpanded(expanded === i ? -1 : i);
@@ -26,12 +35,24 @@ function RecipeCard(props) {
 
   const handleLike = async (id) => {
     if (user === null) return;
-    try {
-      await axios.post(
-        "http://localhost:8080/recipes/like/" + id + "/" + user.uid
-      );
-    } catch (error) {
-      console.log(error.message);
+    if (!isLiked) {
+      try {
+        await axios.post(
+          "http://localhost:8080/recipes/like/" + id + "/" + user.uid
+        );
+        setIsLiked(true);
+      } catch (error) {
+        console.log(error.message);
+      }
+    } else {
+      try {
+        await axios.get(
+          "http://localhost:8080/recipes/liked/delete/" + id + "/" + user.uid
+        );
+        setIsLiked(false);
+      } catch (error) {
+        console.log(error.message);
+      }
     }
   };
 
@@ -91,7 +112,10 @@ function RecipeCard(props) {
       </CardContent>
 
       <CardActions disableSpacing>
-        <IconButton color="secondary" onClick={() => handleLike(recipe.id)}>
+        <IconButton
+          sx={{ color: isLiked ? "#eb4034" : "#545454" }}
+          onClick={() => handleLike(recipe.id)}
+        >
           <FavoriteIcon />
         </IconButton>
         <ExpandMore
