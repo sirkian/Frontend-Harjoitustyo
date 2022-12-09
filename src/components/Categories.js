@@ -2,7 +2,6 @@ import { Box, Typography } from "@mui/material";
 import React, { useState } from "react";
 import axios from "axios";
 import RecipeCard from "./RecipeCard";
-import { containerBox } from "../utils/Theme";
 import Topbar from "./navigation/Topbar";
 import IconButton from "@mui/material/IconButton";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -50,18 +49,7 @@ function Categories() {
       <Topbar />
       <Box sx={containerBox}>
         {category.length > 0 && (
-          <Box
-            sx={{
-              textAlign: "center",
-              backgroundColor: "background.paper",
-              padding: 4,
-              borderRadius: 2,
-              marginTop: 8,
-              width: 600,
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
+          <Box sx={innerBox}>
             <IconButton
               sx={{ fontSize: 16, alignSelf: "flex-start" }}
               color="secondary"
@@ -93,31 +81,14 @@ function Categories() {
             );
           })
         ) : (
-          <Box
-            sx={{
-              textAlign: "center",
-              backgroundColor: "background.paper",
-              paddingY: 10,
-              paddingX: 40,
-              borderRadius: 2,
-              marginTop: 8,
-            }}
-          >
+          <Box sx={background}>
             <Typography variant="h5" sx={{ marginBottom: 5 }}>
               Kategoriat
             </Typography>
             {categories.map((category, index) => {
               return (
                 <Typography
-                  sx={{
-                    fontSize: 18,
-                    marginBottom: 2,
-                    cursor: "pointer",
-                    bgcolor: "background.paper",
-                    paddingY: 0.8,
-                    paddingX: 2,
-                    borderRadius: 1,
-                  }}
+                  sx={categoryText}
                   key={index}
                   onClick={() => handleShowCategory(index)}
                 >
@@ -131,5 +102,44 @@ function Categories() {
     </>
   );
 }
+
+const containerBox = {
+  display: "flex",
+  alignItems: "center",
+  flexDirection: "column",
+  paddingTop: 15,
+  minHeight: "100vh",
+  backgroundColor: "background.main",
+};
+
+const innerBox = {
+  textAlign: "center",
+  backgroundColor: "background.paper",
+  padding: 4,
+  borderRadius: 2,
+  marginTop: 8,
+  width: 600,
+  display: "flex",
+  flexDirection: "column",
+};
+
+const background = {
+  textAlign: "center",
+  backgroundColor: "background.paper",
+  paddingY: 10,
+  paddingX: 40,
+  borderRadius: 2,
+  marginTop: 8,
+};
+
+const categoryText = {
+  fontSize: 18,
+  marginBottom: 2,
+  cursor: "pointer",
+  bgcolor: "background.paper",
+  paddingY: 0.8,
+  paddingX: 2,
+  borderRadius: 1,
+};
 
 export default Categories;

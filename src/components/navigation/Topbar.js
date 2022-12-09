@@ -54,7 +54,7 @@ function Topbar() {
             }}
             variant="h4"
           >
-            topbar
+            recipes!
           </Typography>
 
           <Box
@@ -75,7 +75,7 @@ function Topbar() {
                 <MenuList>
                   <Menu
                     anchorEl={menu}
-                    anchorOrigin={{ vertical: 60, horizontal: 0 }}
+                    anchorOrigin={{ vertical: 70, horizontal: 10 }}
                     open={Boolean(menu)}
                     onClose={handleCloseMenu}
                   >
@@ -87,7 +87,7 @@ function Topbar() {
                       component={Link}
                       to={"/user/" + user.uid + "/settings"}
                     >
-                      <ListItemIcon>
+                      <ListItemIcon sx={{ color: "text.secondary" }}>
                         <AdminPanelSettingsOutlinedIcon />
                       </ListItemIcon>
                       <ListItemText primary="Asetukset" />
@@ -97,7 +97,7 @@ function Topbar() {
                       component={Link}
                       to={"/user/" + user.uid + "/recipes"}
                     >
-                      <ListItemIcon>
+                      <ListItemIcon sx={{ color: "text.secondary" }}>
                         <MenuBookOutlinedIcon />
                       </ListItemIcon>
                       <ListItemText primary="Omat reseptit" />
@@ -107,13 +107,13 @@ function Topbar() {
                       component={Link}
                       to={"/user/" + user.uid + "/liked"}
                     >
-                      <ListItemIcon>
+                      <ListItemIcon sx={{ color: "text.secondary" }}>
                         <FavoriteBorderOutlinedIcon />
                       </ListItemIcon>
                       <ListItemText primary="Suosikit" />
                     </MenuItem>
                     <MenuItem onClick={() => signOut(auth)}>
-                      <ListItemIcon>
+                      <ListItemIcon sx={{ color: "#c26767" }}>
                         <LogoutOutlinedIcon />
                       </ListItemIcon>
                       <ListItemText primary="Kirjaudu ulos" />

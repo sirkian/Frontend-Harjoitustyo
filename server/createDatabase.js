@@ -23,7 +23,8 @@ db.serialize(() => {
     "incredients text NOT NULL, " +
     "date date, " +
     "userName text NOT NULL, " +
-    "userId text NOT NULL );";
+    "userId text NOT NULL, " +
+    "likes integer DEFAULT 0 NOT NULL );";
 
   db.run(sql, (error) => {
     if (error) {

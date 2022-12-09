@@ -73,23 +73,24 @@ app.get("/recipes/search/:query", (req, res) => {
   );
 });
 
+app.post("/recipes/like/:id/:userId", (req, res) => {
+  const id = req.params.id;
+  const userId = req.params.userId;
+  db.run(
+    "INSERT INTO liked (recipeId, userId) VALUES (?, ?)",
+    [id, userId],
+    (error, result) => {
+      if (error) throw error;
+      return res.status(200).json({ count: 1 });
+    }
+  );
+});
+
 app.get("/recipes/liked/all", (req, res) => {
   db.all("SELECT * FROM liked", (error, result) => {
     if (error) throw error;
     return res.status(200).json(result);
   });
-});
-
-app.get("/recipes/liked/count/:id", (req, res) => {
-  const id = req.params.id;
-  db.get(
-    "SELECT COUNT(liked_id) as likes FROM liked WHERE recipeId = ?",
-    [id],
-    (error, result) => {
-      if (error) throw error;
-      return res.status(200).json(result);
-    }
-  );
 });
 
 app.get("/recipes/liked/:userId", (req, res) => {
@@ -113,6 +114,19 @@ app.get("/recipes/liked/delete/:recipeId/:userId", (req, res) => {
   db.run(
     "DELETE FROM liked WHERE recipeId = ? AND userId = ?",
     [recipeId, userId],
+    function (error, result) {
+      if (error) throw error;
+      return res.status(200).json({ count: this.changes });
+    }
+  );
+});
+
+app.post("/recipes/likecounter/:likes/:id", (req, res) => {
+  const likes = req.params.likes;
+  const id = req.params.id;
+  db.run(
+    "UPDATE recipe SET likes = ? WHERE id = ?",
+    [likes, id],
     function (error, result) {
       if (error) throw error;
       return res.status(200).json({ count: this.changes });
@@ -181,19 +195,6 @@ app.post("/recipes/edit/", upload.single("image"), (req, res) => {
       file.userId,
       file.id,
     ],
-    (error, result) => {
-      if (error) throw error;
-      return res.status(200).json({ count: 1 });
-    }
-  );
-});
-
-app.post("/recipes/like/:id/:userId", (req, res) => {
-  const id = req.params.id;
-  const userId = req.params.userId;
-  db.run(
-    "INSERT INTO liked (recipeId, userId) VALUES (?, ?)",
-    [id, userId],
     (error, result) => {
       if (error) throw error;
       return res.status(200).json({ count: 1 });

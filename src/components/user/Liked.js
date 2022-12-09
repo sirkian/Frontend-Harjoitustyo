@@ -2,7 +2,6 @@ import { Box, Typography } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import RecipeCard from "../RecipeCard";
-import { containerBox } from "../../utils/Theme";
 import { auth } from "../../utils/Firebase";
 import Topbar from "../navigation/Topbar";
 
@@ -60,5 +59,14 @@ function Liked() {
     </>
   );
 }
+
+const containerBox = {
+  display: "flex",
+  alignItems: "center",
+  flexDirection: "column",
+  paddingTop: 15,
+  minHeight: "100vh",
+  backgroundColor: "background.main",
+};
 
 export default Liked;

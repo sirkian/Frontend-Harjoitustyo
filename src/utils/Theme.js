@@ -1,7 +1,7 @@
 import { createTheme } from "@mui/material";
 
 const lightTransparent = "rgba(255, 255, 255, 0.55)";
-const darkTransparent = "rgba(0, 0, 0, 0.55)";
+const darkTransparent = "rgba(0, 0, 0, 0.45)";
 
 export const lightTheme = createTheme({
   palette: {
@@ -10,6 +10,7 @@ export const lightTheme = createTheme({
     text: { primary: "#212121", secondary: "#51c297", contrast: "#000" },
     background: {
       paper: "rgba(255, 255, 255, 0.65)",
+      main: "#cccccc",
     },
   },
   typography: {
@@ -59,7 +60,8 @@ export const darkTheme = createTheme({
     secondary: { main: "#f0f0f0", contrastText: "#60ebb6" },
     text: { primary: "#f0f0f0", secondary: "#51c297", contrast: "#60ebb6" },
     background: {
-      paper: "rgba(0, 0, 0, 0.65)",
+      paper: "rgba(0, 0, 0, 0.4)",
+      main: "#343536",
     },
   },
   typography: {
@@ -79,7 +81,7 @@ export const darkTheme = createTheme({
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          backgroundColor: "rgba(0, 0, 0, 0.7)",
+          backgroundColor: "rgba(0, 0, 0, 0.45)",
           border: "none",
           marginTop: 74,
         },
@@ -102,13 +104,3 @@ export const darkTheme = createTheme({
     },
   },
 });
-
-export const containerBox = {
-  display: "flex",
-  alignItems: "center",
-  flexDirection: "column",
-  paddingTop: 15,
-  minHeight: "100vh",
-  backgroundImage:
-    "linear-gradient(90deg, rgba(138,136,179,1) 0%, rgba(153,123,154,1) 100%)",
-};

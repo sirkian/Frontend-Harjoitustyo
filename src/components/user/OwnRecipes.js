@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../utils/Firebase";
-import { containerBox } from "../../utils/Theme";
 import RecipeCard from "../RecipeCard";
 import Topbar from "../navigation/Topbar";
 
@@ -114,5 +113,14 @@ function OwnRecipes() {
     </>
   );
 }
+
+const containerBox = {
+  display: "flex",
+  alignItems: "center",
+  flexDirection: "column",
+  paddingTop: 15,
+  minHeight: "100vh",
+  backgroundColor: "background.main",
+};
 
 export default OwnRecipes;

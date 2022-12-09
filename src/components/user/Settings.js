@@ -1,7 +1,6 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
 import Topbar from "../navigation/Topbar";
-import { containerBox } from "../../utils/Theme";
 import { auth } from "../../utils/Firebase";
 import {
   updateProfile,
@@ -60,18 +59,7 @@ function Settings() {
     <>
       <Topbar />
       <Box sx={containerBox}>
-        <Box
-          sx={{
-            textAlign: "center",
-            backgroundColor: "background.paper",
-            padding: 4,
-            borderRadius: 2,
-            marginTop: 8,
-            width: 600,
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
+        <Box sx={innerBox}>
           <Typography variant="h5">Asetukset</Typography>
           <Typography variant="h6" sx={{ marginTop: 3 }}>
             Muuta tietoja
@@ -97,18 +85,7 @@ function Settings() {
             Päivitä tiedot
           </Button>
         </Box>
-        <Box
-          sx={{
-            textAlign: "center",
-            backgroundColor: "background.paper",
-            padding: 4,
-            borderRadius: 2,
-            marginTop: 8,
-            width: 600,
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
+        <Box sx={innerBox}>
           <Typography variant="h5">Muut toiminnot</Typography>
           <Button
             sx={{ color: "text.contrast", marginTop: 3 }}
@@ -128,5 +105,25 @@ function Settings() {
     </>
   );
 }
+
+const containerBox = {
+  display: "flex",
+  alignItems: "center",
+  flexDirection: "column",
+  paddingTop: 15,
+  minHeight: "100vh",
+  backgroundColor: "background.main",
+};
+
+const innerBox = {
+  textAlign: "center",
+  backgroundColor: "background.paper",
+  padding: 4,
+  borderRadius: 2,
+  marginTop: 8,
+  width: 600,
+  display: "flex",
+  flexDirection: "column",
+};
 
 export default Settings;

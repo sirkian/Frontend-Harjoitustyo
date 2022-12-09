@@ -59,26 +59,8 @@ function SignUp() {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        backgroundImage:
-          "linear-gradient(90deg, rgba(138,136,179,1) 0%, rgba(153,123,154,1) 100%)",
-        minHeight: "100vh",
-      }}
-    >
-      <Box
-        sx={{
-          marginTop: 40,
-          height: "100%",
-          bgcolor: "rgba(255, 255, 255, 0.65)",
-          display: "flex",
-          flexDirection: "column",
-          padding: 5,
-          borderRadius: 3,
-        }}
-      >
+    <Box sx={containerBox}>
+      <Box sx={innerBox}>
         <TextField
           name="displayName"
           value={user.displayName}
@@ -115,15 +97,37 @@ function SignUp() {
         >
           Rekisteröidy
         </Button>
-        <Typography
-          sx={{ marginTop: 3, textAlign: "center", cursor: "pointer" }}
-          onClick={() => navigate("/login")}
-        >
+        <Typography sx={text} onClick={() => navigate("/login")}>
           Oletko jo rekisteröitynyt? Kirjaudu sisään.
         </Typography>
       </Box>
     </Box>
   );
 }
+
+const containerBox = {
+  display: "flex",
+  alignItems: "center",
+  flexDirection: "column",
+  minHeight: "100vh",
+  backgroundColor: "background.main",
+};
+
+const innerBox = {
+  marginTop: 40,
+  height: "100%",
+  bgcolor: "rgba(255, 255, 255, 0.65)",
+  display: "flex",
+  flexDirection: "column",
+  padding: 5,
+  borderRadius: 3,
+};
+
+const text = {
+  marginTop: 3,
+  textAlign: "center",
+  cursor: "pointer",
+  color: "primary.contrastText",
+};
 
 export default SignUp;

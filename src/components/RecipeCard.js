@@ -14,11 +14,14 @@ import IconButton from "@mui/material/IconButton";
 import { ExpandMore } from "../utils/Utils";
 import axios from "axios";
 import { auth } from "../utils/Firebase";
+import { useNavigate } from "react-router-dom";
+import Tilt from "react-parallax-tilt";
 
 function RecipeCard(props) {
   const [expanded, setExpanded] = useState(-1);
   const [isLiked, setIsLiked] = useState(false);
   const { recipe, i, isOwnRecipe, handleEdit, handleDelete, likes } = props;
+  const navigate = useNavigate();
   const user = auth.currentUser;
 
   useEffect(() => {
@@ -35,21 +38,32 @@ function RecipeCard(props) {
 
   const handleLike = async (id) => {
     if (user === null) return;
+    let likes = recipe.likes;
     if (!isLiked) {
+      likes = likes + 1;
       try {
         await axios.post(
           "http://localhost:8080/recipes/like/" + id + "/" + user.uid
         );
+        await axios.post(
+          "http://localhost:8080/recipes/likecounter/" + likes + "/" + id
+        );
         setIsLiked(true);
+        navigate("/", { state: { clear: true } });
       } catch (error) {
         console.log(error.message);
       }
     } else {
+      likes = likes - 1;
       try {
         await axios.get(
           "http://localhost:8080/recipes/liked/delete/" + id + "/" + user.uid
         );
+        await axios.post(
+          "http://localhost:8080/recipes/likecounter/" + likes + "/" + id
+        );
         setIsLiked(false);
+        navigate("/", { state: { clear: true } });
       } catch (error) {
         console.log(error.message);
       }
@@ -57,122 +71,122 @@ function RecipeCard(props) {
   };
 
   return (
-    <Card
-      sx={{
-        width: 600,
-        marginY: 5,
-        bgcolor: "background.paper",
-      }}
-    >
-      <CardHeader
-        title={recipe.name.toUpperCase()}
-        subheader={recipe.userName}
-        sx={{ textAlign: "center" }}
-      />
+    <Tilt tiltEnable={false} scale={1.04} transitionSpeed={1000}>
+      <Card sx={card}>
+        <CardHeader
+          title={recipe.name.toUpperCase()}
+          subheader={recipe.userName}
+          sx={{ textAlign: "center" }}
+        />
 
-      <CardMedia
-        component="img"
-        height="250"
-        src={"http://localhost:8080/recipes/download/" + recipe.image}
-        alt={recipe.image}
-      />
+        <CardMedia
+          component="img"
+          height="250"
+          src={"http://localhost:8080/recipes/download/" + recipe.image}
+          alt={recipe.image}
+        />
 
-      <CardContent>
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography sx={{ fontSize: 14, color: "text.secondary" }}>
-            {recipe.date.substr(3, 12)}
-          </Typography>
-          <Typography sx={{ fontSize: 14, color: "text.secondary" }}>
-            {recipe.category}
-          </Typography>
-        </Box>
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-          {recipe.time.length > 0 && (
-            <Typography sx={{ fontWeight: "light" }}>
-              Valmistusaika: <b>{recipe.time}</b> min.
-            </Typography>
-          )}
-          {recipe.portions.length > 0 && (
-            <Typography sx={{ fontWeight: "light" }}>
-              Annosmäärä: <b>{recipe.portions}</b> annosta
-            </Typography>
-          )}
-        </Box>
-        <Typography
-          paragraph
-          sx={{
-            mt: 3,
-            fontSize: 14,
-            textAlign: "center",
-            fontWeight: "light",
-          }}
-        >
-          {recipe.description}
-        </Typography>
-      </CardContent>
-
-      <CardActions disableSpacing>
-        <IconButton
-          sx={{ color: isLiked ? "#eb4034" : "#545454" }}
-          onClick={() => handleLike(recipe.id)}
-        >
-          <FavoriteIcon />
-        </IconButton>
-        <ExpandMore
-          expand={expanded}
-          onClick={() => handleExpand(i)}
-          aria-expanded={expanded === i}
-          aria-label="show more"
-        >
-          <ExpandMoreIcon color="secondary" />
-        </ExpandMore>
-        {isOwnRecipe && (
-          <>
-            <IconButton color="secondary" onClick={() => handleEdit(recipe)}>
-              <EditIcon />
-            </IconButton>
-            <IconButton
-              color="secondary"
-              onClick={() => handleDelete(recipe.id)}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </>
-        )}
-      </CardActions>
-
-      <Collapse in={expanded === i} timeout="auto" unmountOnExit>
         <CardContent>
-          <Box sx={{ marginLeft: 3 }}>
-            <Typography variant="h6">Raaka-aineet:</Typography>
-            <List dense>
-              {recipe.incredients.split("|").map((list, index) => {
-                return (
-                  <ListItem sx={{ marginBottom: -1 }} key={index}>
-                    <ListItemText primary={list} />
-                  </ListItem>
-                );
-              })}
-            </List>
-          </Box>
-          <Box sx={{ marginX: 3, marginTop: 3 }}>
-            <Typography variant="h6">Valmistusohje:</Typography>
-            <Typography
-              paragraph
-              sx={{
-                fontSize: 16,
-                fontWeight: "light",
-                marginX: 2,
-                marginY: 3,
-              }}
-            >
-              {recipe.instructions}
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography sx={{ fontSize: 14, color: "text.secondary" }}>
+              {recipe.date.substr(3, 12)}
+            </Typography>
+            <Typography sx={{ fontSize: 14, color: "text.secondary" }}>
+              {recipe.category}
             </Typography>
           </Box>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {recipe.time.length > 0 && (
+              <Typography sx={{ fontWeight: "light" }}>
+                Valmistusaika: <b>{recipe.time}</b> min.
+              </Typography>
+            )}
+            {recipe.portions.length > 0 && (
+              <Typography sx={{ fontWeight: "light" }}>
+                Annosmäärä: <b>{recipe.portions}</b> annosta
+              </Typography>
+            )}
+          </Box>
+          <Typography paragraph sx={descriptionText}>
+            {recipe.description}
+          </Typography>
         </CardContent>
-      </Collapse>
-    </Card>
+
+        <CardActions disableSpacing>
+          <IconButton
+            sx={{ color: isLiked ? "#c26767" : "#949292" }}
+            onClick={() => handleLike(recipe.id)}
+          >
+            <FavoriteIcon /> {recipe.likes}
+          </IconButton>
+          <ExpandMore
+            expand={expanded}
+            onClick={() => handleExpand(i)}
+            aria-expanded={expanded === i}
+            aria-label="show more"
+          >
+            <ExpandMoreIcon color="secondary" />
+          </ExpandMore>
+          {isOwnRecipe && (
+            <>
+              <IconButton color="secondary" onClick={() => handleEdit(recipe)}>
+                <EditIcon />
+              </IconButton>
+              <IconButton
+                color="secondary"
+                onClick={() => handleDelete(recipe.id)}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </>
+          )}
+        </CardActions>
+
+        <Collapse in={expanded === i} timeout="auto" unmountOnExit>
+          <CardContent>
+            <Box sx={{ marginLeft: 3 }}>
+              <Typography variant="h6">Raaka-aineet:</Typography>
+              <List dense>
+                {recipe.incredients.split("|").map((list, index) => {
+                  return (
+                    <ListItem sx={{ marginBottom: -1 }} key={index}>
+                      <ListItemText primary={list} />
+                    </ListItem>
+                  );
+                })}
+              </List>
+            </Box>
+            <Box sx={{ marginX: 3, marginTop: 3 }}>
+              <Typography variant="h6">Valmistusohje:</Typography>
+              <Typography paragraph sx={instructionsText}>
+                {recipe.instructions}
+              </Typography>
+            </Box>
+          </CardContent>
+        </Collapse>
+      </Card>
+    </Tilt>
   );
 }
+
+const card = {
+  width: 600,
+  marginY: 5,
+  bgcolor: "background.paper",
+};
+
+const descriptionText = {
+  mt: 3,
+  fontSize: 14,
+  textAlign: "center",
+  fontWeight: "light",
+};
+
+const instructionsText = {
+  fontSize: 16,
+  fontWeight: "light",
+  marginX: 2,
+  marginY: 3,
+};
 
 export default RecipeCard;

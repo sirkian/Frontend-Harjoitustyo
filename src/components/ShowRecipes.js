@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import RecipeCard from "./RecipeCard";
-import { containerBox } from "../utils/Theme";
+// import { containerBox } from "../utils/Theme";
 import { useLocation } from "react-router";
 import Topbar from "./navigation/Topbar";
 import { auth } from "../utils/Firebase";
@@ -100,5 +100,14 @@ function ShowRecipes() {
     </>
   );
 }
+
+const containerBox = {
+  display: "flex",
+  alignItems: "center",
+  flexDirection: "column",
+  paddingTop: 15,
+  minHeight: "100vh",
+  backgroundColor: "background.main",
+};
 
 export default ShowRecipes;

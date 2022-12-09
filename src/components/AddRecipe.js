@@ -19,7 +19,6 @@ import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import axios from "axios";
 import { timeMarks, portionMarks } from "../utils/Utils";
 import { auth } from "../utils/Firebase";
-import { containerBox } from "../utils/Theme";
 import Topbar from "./navigation/Topbar";
 
 function AddRecipe() {
@@ -127,16 +126,7 @@ function AddRecipe() {
     <>
       <Topbar />
       <Box sx={containerBox}>
-        <Paper
-          sx={{
-            width: 600,
-            padding: 5,
-            display: "flex",
-            flexDirection: "column",
-            bgcolor: "background.paper",
-          }}
-          component="form"
-        >
+        <Paper sx={formPaper} component="form">
           <Typography sx={{ textAlign: "center", mb: 3 }} variant="h5">
             Lisää uusi resepti
           </Typography>
@@ -178,6 +168,7 @@ function AddRecipe() {
                 {incredientList.length > 1 && (
                   <IconButton
                     sx={{ right: 55, marginRight: -6 }}
+                    color="secondary"
                     onClick={() => handleRemoveIncredient(index)}
                   >
                     <CancelOutlinedIcon fontSize="large" />
@@ -187,7 +178,7 @@ function AddRecipe() {
                   <Button
                     sx={{ marginLeft: 3, paddingY: 1.7 }}
                     color="secondary"
-                    variant="contained"
+                    variant="outlined"
                     onClick={handleAddIncredient}
                   >
                     Lisää
@@ -348,5 +339,22 @@ function AddRecipe() {
     </>
   );
 }
+
+const containerBox = {
+  display: "flex",
+  alignItems: "center",
+  flexDirection: "column",
+  paddingTop: 15,
+  minHeight: "100vh",
+  backgroundColor: "background.main",
+};
+
+const formPaper = {
+  width: 600,
+  padding: 5,
+  display: "flex",
+  flexDirection: "column",
+  bgcolor: "background.paper",
+};
 
 export default AddRecipe;
