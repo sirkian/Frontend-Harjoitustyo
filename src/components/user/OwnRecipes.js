@@ -1,11 +1,11 @@
 import { Box, Typography, Alert, Snackbar } from "@mui/material";
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../../utils/Firebase";
+import { auth, database } from "../../utils/Firebase";
 import RecipeCard from "../RecipeCard";
 import Topbar from "../navigation/Topbar";
+import { ref, remove } from "firebase/database";
 
 function OwnRecipes() {
   const [recipes, setRecipes] = useState([]);
@@ -62,6 +62,7 @@ function OwnRecipes() {
     if (window.confirm("Haluatko varmasti poistaa reseptin?")) {
       try {
         await axios.get("http://localhost:8080/recipes/delete/" + id);
+        remove(ref(database, "comments/" + id));
         setOpen(true);
         fetchRecipes();
       } catch (error) {

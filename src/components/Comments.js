@@ -1,5 +1,6 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { database } from "../utils/Firebase";
+import { timeAgo } from "../utils/Utils";
 import { ref, push, onValue, remove } from "firebase/database";
 import React, { useEffect, useState } from "react";
 
@@ -31,6 +32,7 @@ function Comments(props) {
           comment,
           userId: user.uid,
           username: user.displayName,
+          date: Date.now(),
         });
       } catch (error) {
         console.log(error.message);
@@ -71,9 +73,24 @@ function Comments(props) {
             .map((comment) => {
               return (
                 <Box sx={commentBg} key={comment.key}>
-                  <Typography sx={{ color: "text.contrast", fontSize: 17 }}>
-                    {comment.username}
-                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        color: "text.contrast",
+                        fontSize: 17,
+                      }}
+                    >
+                      {comment.username}
+                    </Typography>
+                    <Typography sx={subText}>
+                      {timeAgo(comment.date)}
+                    </Typography>
+                  </Box>
                   <Typography sx={{ fontWeight: "light", fontSize: 15 }}>
                     {comment.comment}
                   </Typography>
@@ -81,7 +98,7 @@ function Comments(props) {
                     <>
                       {user.uid === comment.userId && (
                         <Typography
-                          sx={deleteText}
+                          sx={subText}
                           onClick={() => handleDelete(comment.key)}
                         >
                           Poista
@@ -118,7 +135,7 @@ const commentBg = {
   borderRadius: 1,
 };
 
-const deleteText = {
+const subText = {
   fontWeight: "light",
   fontSize: 14,
   textAlign: "right",

@@ -7,6 +7,7 @@ import {
   TextField,
   Box,
   IconButton,
+  Divider,
 } from "@mui/material";
 import { Link, Outlet } from "react-router-dom";
 import { auth } from "../../utils/Firebase";
@@ -72,16 +73,19 @@ function Sidebar({ darkMode, setDarkMode }) {
               <ListItemText primary="Etusivu" />
             </ListItem>
           </ListItem>
+          <Divider sx={{ width: "70%" }} />
           <ListItem>
             <ListItem button component={Link} to={user ? "add" : "login"}>
               <ListItemText primary="Lisää resepti" />
             </ListItem>
           </ListItem>
+          <Divider sx={{ width: "70%" }} />
           <ListItem>
             <ListItem button component={Link} to="categories">
               <ListItemText primary="Kategoriat" />
             </ListItem>
           </ListItem>
+          <Divider sx={{ width: "70%" }} />
           <ListItem>
             <ListItem button onClick={() => setDarkMode(!darkMode)}>
               <ListItemText

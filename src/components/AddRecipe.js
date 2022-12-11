@@ -315,7 +315,7 @@ function AddRecipe() {
           <Button
             sx={{ paddingY: 1.8 }}
             color="secondary"
-            variant="contained"
+            variant="outlined"
             onClick={validate}
           >
             {error.length > 0 ? error : "Tallenna"}
