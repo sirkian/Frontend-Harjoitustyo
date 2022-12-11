@@ -10,6 +10,7 @@ export const lightTheme = createTheme({
     text: { primary: "#212121", secondary: "#51c297", contrast: "#000" },
     background: {
       paper: "rgba(255, 255, 255, 0.65)",
+      paperContrast: "rgba(0, 0, 0, 0.1)",
       main: "#cccccc",
     },
   },
@@ -61,6 +62,7 @@ export const darkTheme = createTheme({
     text: { primary: "#f0f0f0", secondary: "#51c297", contrast: "#60ebb6" },
     background: {
       paper: "rgba(0, 0, 0, 0.4)",
+      paperContrast: "rgba(255, 255, 255, 0.1)",
       main: "#343536",
     },
   },

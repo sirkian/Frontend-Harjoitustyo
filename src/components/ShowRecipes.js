@@ -2,7 +2,6 @@ import { Box, Typography } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import RecipeCard from "./RecipeCard";
-// import { containerBox } from "../utils/Theme";
 import { useLocation } from "react-router";
 import Topbar from "./navigation/Topbar";
 import { auth } from "../utils/Firebase";
